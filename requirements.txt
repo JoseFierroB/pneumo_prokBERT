@@ -1,0 +1,8 @@
+torch>=2.0
+transformers>=4.30
+biopython>=1.79
+pandas>=1.5
+scikit-learn>=1.2
+matplotlib>=3.8
+# ProkBERT desde GitHub (no PyPI):
+# pip install git+https://github.com/nbrg-ppcu/prokbert.git
