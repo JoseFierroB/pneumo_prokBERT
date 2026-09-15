@@ -1,0 +1,22 @@
+[workspace]
+name = "pneumo-prokbert"
+version = "0.1.0"
+description = "ProkBERT pneumo fine-tuning 5090 - env aislado"
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[dependencies]
+python = "3.10.*"
+pip = "*"
+
+[pypi-dependencies]
+transformers = ">=4.30,<5"
+torch = { version = ">=2.4,<2.12", index = "https://download.pytorch.org/whl/cu128" }
+datasets = "*"
+accelerate = "*"
+biopython = "*"
+pandas = "*"
+scikit-learn = "*"
+numpy = "*"
+huggingface-hub = "*"
+tokenizers = "*"
