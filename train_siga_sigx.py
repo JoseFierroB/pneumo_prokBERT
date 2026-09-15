@@ -14,6 +14,9 @@ sys.path.insert(0, ".")
 import torch
 torch.set_num_threads(4)
 print(f"torch {torch.__version__} threads {torch.get_num_threads()} cuda {torch.cuda.is_available()}")
+USE_CUDA = torch.cuda.is_available()
+print(f"USE_CUDA={USE_CUDA} device={'cuda' if USE_CUDA else 'cpu'}")
+# 5090 Blackwell: fp16 auto si hay CUDA, sin tocar resto del código
 
 from datasets import load_dataset
 from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer, DataCollatorWithPadding, set_seed
@@ -93,6 +96,8 @@ args = TrainingArguments(
     metric_for_best_model="mcc",
     greater_is_better=True,
     report_to="none",
+    fp16=USE_CUDA,  # minimal: activa fp16 solo si CUDA (5090 lo aprovecha, CPU ignora)
+    bf16=False,
     seed=42,
     logging_steps=10,
     save_total_limit=2,
