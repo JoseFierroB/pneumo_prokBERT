@@ -8,6 +8,7 @@ platforms = ["linux-64"]
 [dependencies]
 python = "3.10.*"
 pip = "*"
+h5py = "*"
 
 [pypi-dependencies]
 transformers = ">=4.30,<5"
@@ -20,3 +21,4 @@ scikit-learn = "*"
 numpy = "*"
 huggingface-hub = "*"
 tokenizers = "*"
+# h5py requerido por prokbert sequtils (aunque no usado en finetuning)
