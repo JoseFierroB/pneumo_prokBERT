@@ -21,4 +21,5 @@ scikit-learn = "*"
 numpy = "*"
 huggingface-hub = "*"
 tokenizers = "*"
+optuna = "*"
 # h5py requerido por prokbert sequtils (aunque no usado en finetuning)
