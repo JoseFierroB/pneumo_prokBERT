@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Pneumo-ProkBERT zero-shot inference (CPU).
 
-Adaptado de promoter-tools/src/runners/prokbert_mini.py para S. pneumoniae D39V/TIGR4 81bp.
-Soporta variantes oficiales con mismo protocolo:
-  mini  = neuralbioinfo/prokbert-mini-promoter      (kmer 6, shift 1, 78 tokens en 81bp)
-  minic = neuralbioinfo/prokbert-mini-c-promoter    (kmer 1, shift 1, 83 tokens en 81bp)
+Adapted from promoter-tools/src/runners/prokbert_mini.py for S. pneumoniae D39V/TIGR4 81 bp.
+Supports official variants with the same protocol:
+  mini  = neuralbioinfo/prokbert-mini-promoter      (kmer 6, shift 1, 78 tokens on 81 bp)
+  minic = neuralbioinfo/prokbert-mini-c-promoter    (kmer 1, shift 1, 83 tokens on 81 bp)
 
-Nota: mini-long (kmer 6, shift 2) excluido por ahora — falta models.py en el repo base
-upstream (neuralbioinfo/prokbert-mini-long) y segmenta 81bp en 2x40, requiere pooling custom.
+Note: mini-long (kmer 6, shift 2) is currently excluded — missing models.py in the
+upstream repository (neuralbioinfo/prokbert-mini-long) and 81 bp would be split into 2x40,
+which requires custom pooling.
 
-Uso:
+Usage:
   python infer_pneumo_prokbert.py --variant mini --pos positives_81bp.fasta --neg negatives_81bp.fasta -o predictions.tsv
 """
 import argparse
@@ -53,8 +54,8 @@ def predict_fasta(model, tokenizer, fasta_path, device, batch_size=32):
 def main():
     ap = argparse.ArgumentParser(description="Pneumo-ProkBERT zero-shot (CPU)")
     ap.add_argument("--variant", choices=sorted(VARIANTS), default="mini")
-    ap.add_argument("--pos", required=True, help="Positives FASTA (81bp)")
-    ap.add_argument("--neg", required=True, help="Negatives FASTA (81bp)")
+    ap.add_argument("--pos", required=True, help="Positives FASTA (81 bp)")
+    ap.add_argument("--neg", required=True, help="Negatives FASTA (81 bp)")
     ap.add_argument("-o", "--output", required=True, help="Output TSV {ID,LABEL,PRED}")
     ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--device", default="cpu")
@@ -63,7 +64,7 @@ def main():
     model_id, kmer, shift = VARIANTS[args.variant]
     t0 = time.time()
     tokenizer = ProkBERTTokenizer(tokenization_params={"kmer": kmer, "shift": shift},
-                                  operation_space="sequence")
+                                   operation_space="sequence")
     model = AutoModelForSequenceClassification.from_pretrained(model_id, trust_remote_code=True)
     model.to(args.device)
     model.eval()
@@ -77,7 +78,7 @@ def main():
                     pd.DataFrame({"ID": neg_ids, "LABEL": 0, "PRED": neg_preds})],
                    ignore_index=True)
     df.to_csv(out, sep="\t", index=False)
-    print(f"[{args.variant}/{model_id}] {len(df)} seqs "
+    print(f"[{args.variant}/{model_id}] {len(df)} sequences "
           f"({len(pos_ids)} pos / {len(neg_ids)} neg) in {time.time()-t0:.1f}s -> {out}")
 
 

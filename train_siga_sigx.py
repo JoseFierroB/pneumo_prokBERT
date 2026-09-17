@@ -16,7 +16,7 @@ torch.set_num_threads(4)
 print(f"torch {torch.__version__} threads {torch.get_num_threads()} cuda {torch.cuda.is_available()}")
 USE_CUDA = torch.cuda.is_available()
 print(f"USE_CUDA={USE_CUDA} device={'cuda' if USE_CUDA else 'cpu'}")
-# 5090 Blackwell: fp16 auto si hay CUDA, sin tocar resto del código
+# 5090 Blackwell: auto fp16 if CUDA is available, without touching the rest of the code
 
 from datasets import load_dataset
 from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer, DataCollatorWithPadding, set_seed
@@ -25,7 +25,7 @@ import numpy as np
 
 set_seed(42)
 
-# --- tokenizer (patch vocab_size/save para Trainer) ---
+# --- tokenizer (patch vocab_size/save for Trainer) ---
 from prokbert.prokbert_tokenizer import ProkBERTTokenizer
 # patch vocab_size NotImplementedError
 try:
@@ -38,7 +38,7 @@ try:
             pass
     except: pass
 except: pass
-# aplicar patch incondicional compatible
+# apply unconditional compatible patch
 ProkBERTTokenizer.vocab_size = property(lambda self: len(self.get_vocab()) if hasattr(self, 'get_vocab') else 4101)
 _orig_save = ProkBERTTokenizer.save_pretrained
 def _patched_save(self, save_directory, **kwargs):
@@ -96,7 +96,7 @@ args = TrainingArguments(
     metric_for_best_model="mcc",
     greater_is_better=True,
     report_to="none",
-    fp16=USE_CUDA,  # minimal: activa fp16 solo si CUDA (5090 lo aprovecha, CPU ignora)
+    fp16=USE_CUDA,  # minimal: enable fp16 only if CUDA is available (5090 benefits, CPU ignores)
     bf16=False,
     seed=42,
     logging_steps=10,
