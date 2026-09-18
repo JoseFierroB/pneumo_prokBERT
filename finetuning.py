@@ -74,7 +74,7 @@ def compute_metrics(eval_pred):
         "roc_auc": roc_auc_score(labels, probs[:,1]),
     }
 
-# Paper faithful hyperparams for D39V (same as upstream 223k: 2ep, bs128, lr0.0004, wd0.01, warmup500, betas 0.95/0.98)
+# Paper aligned hyperparams for D39V (same as upstream 223k: 2ep, bs128, lr0.0004, wd0.01, warmup500, betas 0.95/0.98)
 args = TrainingArguments(
     output_dir="./finetuning_outputs/d39v_989_paper_2ep",
     per_device_train_batch_size=128,

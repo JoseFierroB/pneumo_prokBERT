@@ -33,7 +33,7 @@ Environment is defined in `pixi.toml` (Python 3.10, PyTorch cu128, transformers,
 ### Fine-tuning (paper replica, upstream 223k)
 
 ```bash
-# Paper replica / adaptation — faithful to tools/prokbert/examples/finetuning.py
+# Paper replica / adaptation — aligned with tools/prokbert/examples/finetuning.py
 # Note: Upstream examples/finetuning.py has a bug (BertForBinaryClassificationWithPooling not found,
 # correct class is ProkBertForSequenceClassification in prokbert/models/megatronbert.py:1710)
 # This replica fixes that shim and is executable.

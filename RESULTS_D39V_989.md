@@ -2,7 +2,7 @@
 
 **Dataset** `positives 989 (973 unique) + negatives 1000 =1973 dedup100` 16 dups in positives, 70/15/15 stratify `train1381 700/681 eval296 150/146 test296 150/146` 81bp
 
-**Fine-tuning** `train_d39v_989.py` paper-faithful k6s1 fp16 5090, default 3 epochs lr5e-05 + optuna 20 (lr1e-5-1e-4, wd0-0.3, warmup0-0.2, epochs3-6)
+**Fine-tuning** `train_d39v_989.py` paper-aligned k6s1 fp16 5090, default 3 epochs lr5e-05 + optuna 20 (lr1e-5-1e-4, wd0-0.3, warmup0-0.2, epochs3-6)
 
 | Model | Hparams | Eval296 mcc/acc/auc | Test296 mcc/acc/auc | Time |
 |---|---|---|---|---|

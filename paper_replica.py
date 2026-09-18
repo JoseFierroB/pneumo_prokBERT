@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Paper replica / adaptation — ProkBERT fine-tuning faithful to the paper, from scratch with our sequences
+Paper replica / adaptation — ProkBERT fine-tuning aligned with the paper, from scratch with our sequences
 - Based on tools/prokbert/examples/finetuning.py (133 lines, helper + ProkBERTConfig + training_utils)
   * Upstream file has a bug: `from prokbert.models import BertForBinaryClassificationWithPooling` does not exist
     (correct class is `ProkBertForSequenceClassification` in `prokbert/models/megatronbert.py:1710`), so it cannot be executed without a shim.
