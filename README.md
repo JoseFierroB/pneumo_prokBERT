@@ -125,6 +125,8 @@ Shape notes: `s` in tokenization is the k-mer stride (`1`), `t=78` is the sequen
 
 Metrics are Accuracy, MCC, F1, and ROC-AUC computed on `eval`/`test`. The `compute_metrics` callback uses `argmax` (threshold 0.5) for MCC/Accuracy and `softmax(logits)[:,1]` for ROC-AUC.
 
+Full results for the four models (HF mini-promoter baseline, paper replica 223k, mix 223k+d39v, D39V from promoter) across five datasets (D39V 1989, TIGR4 1476, mix 3465, sigma70 1864, multispecies 22582) are in [EVALUATION.md](EVALUATION.md) and [EVALUATION.json](EVALUATION.json) (4×5 table, @0.5 and @Youden).
+
 ## License
 
 MIT. ProkBERT is licensed under the terms provided by the original authors; see `tools/prokbert` for details.
