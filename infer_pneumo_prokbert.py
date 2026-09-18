@@ -3,8 +3,9 @@
 
 Adapted from promoter-tools/src/runners/prokbert_mini.py for S. pneumoniae D39V/TIGR4 81 bp.
 Supports official variants with the same protocol:
-  mini  = neuralbioinfo/prokbert-mini-promoter      (kmer 6, shift 1, 78 tokens on 81 bp)
-  minic = neuralbioinfo/prokbert-mini-c-promoter    (kmer 1, shift 1, 83 tokens on 81 bp)
+  mini  = neuralbioinfo/prokbert-mini-promoter      (kmer 6, shift 1, 78 tokens on 81 bp) — promoter fine-tune, default
+  minic = neuralbioinfo/prokbert-mini-c-promoter    (kmer 1, shift 1, 83 tokens on 81 bp) — promoter fine-tune
+  base  = neuralbioinfo/prokbert-mini               (kmer 6, shift 1, 78 tokens) — MLM base, for fine-tuning only (no promoter head)
 
 Note: mini-long (kmer 6, shift 2) is currently excluded — missing models.py in the
 upstream repository (neuralbioinfo/prokbert-mini-long) and 81 bp would be split into 2x40,
@@ -30,8 +31,9 @@ except ImportError as e:
              "And: pip install git+https://github.com/nbrg-ppcu/prokbert.git")
 
 VARIANTS = {
-    "mini": ("neuralbioinfo/prokbert-mini-promoter", 6, 1),
-    "minic": ("neuralbioinfo/prokbert-mini-c-promoter", 1, 1),
+    "mini": ("neuralbioinfo/prokbert-mini-promoter", 6, 1),  # promoter fine-tune (default for inference)
+    "minic": ("neuralbioinfo/prokbert-mini-c-promoter", 1, 1),  # promoter fine-tune, k1
+    "base": ("neuralbioinfo/prokbert-mini", 6, 1),  # MLM base, not for direct promoter inference — use for fine-tuning
 }
 
 
@@ -62,6 +64,10 @@ def main():
     args = ap.parse_args()
 
     model_id, kmer, shift = VARIANTS[args.variant]
+    if args.variant == "base":
+        sys.exit("Variant 'base' is the MLM pre-trained model without a promoter head. "
+                 "Use it for fine-tuning (see finetuning.py / paper_replica.py), not for direct promoter inference. "
+                 "Choose --variant mini or minic for zero-shot promoter prediction.")
     t0 = time.time()
     tokenizer = ProkBERTTokenizer(tokenization_params={"kmer": kmer, "shift": shift},
                                    operation_space="sequence")
