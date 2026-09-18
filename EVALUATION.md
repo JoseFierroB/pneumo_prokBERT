@@ -1,7 +1,7 @@
-# Evaluation Report — 4 Models × 5 Datasets (5090, k6s1, @0.5 / Youden)
+# Evaluation Report — 5 Models × 5 Datasets (5090, k6s1, @0.5 / Youden)
 
-Models: HF mini-promoter (baseline), Paper replica 80/10/10 2ep (223k), Mix 223k+d39v 2ep (225k), D39V from promoter 2ep (989).
-Datasets: `1_d39v 1989` (D39V 989+1000), `2_tigr4_high 1476`, `4_d39v_tigr4_high 3465` (naive), `test_sigma70 1864` (E.coli), `test_multispecies 22582` (33 species). Metrics @0.5 (Trainer/paper) and @Youden (benchmark).
+Models: HF mini-promoter (baseline), Paper replica 80/10/10 2ep (223k), Mix 223k+d39v 2ep (225k), D39V from promoter 2ep (989), D39V base 989 paper 2ep (1973, base-only pneumo).
+Datasets: `1_d39v 1989` (D39V 989+1000), `2_tigr4_high 1476`, `4_d39v_tigr4_high 3465` (naive), `dedup_3135 3135` (1399+1736 dedup), `test_sigma70 1864` (E.coli), `test_multispecies 22582` (33 species). Metrics @0.5 (Trainer/paper) and @Youden (benchmark). Data local `data/bacterial_promoters/*.parquet` 223k/1864/22582.
 
 | Model | Dataset | N | ACC@0.5 | MCC@0.5 | AUC | ACC@Youden | MCC@Youden | Thr Youden |
 |---|---|---|---|---|---|---|---|
@@ -25,16 +25,25 @@ Datasets: `1_d39v 1989` (D39V 989+1000), `2_tigr4_high 1476`, `4_d39v_tigr4_high
 | D39V from promoter 2ep (989) | mix_3465 | 3465 | 0.9053 | 0.8108 | 0.9540 | 0.9333 | 0.8697 | 0.966 |
 | D39V from promoter 2ep (989) | sigma70_1864 | 1864 | 0.8578 | 0.7153 | 0.9378 | 0.8680 | 0.7352 | 0.780 |
 | D39V from promoter 2ep (989) | multispecies_22582 | 22582 | 0.8030 | 0.6077 | 0.8830 | 0.8039 | 0.6109 | 0.545 |
+| D39V base 989 paper 2ep (1973) | d39v_1989 | 1989 | 0.9331 | 0.8665 | 0.9665 | 0.9341 | 0.8685 | 0.500 |
+| D39V base 989 paper 2ep (1973) | tigr4_1476 | 1476 | — | — | — | — | — | — |
+| D39V base 989 paper 2ep (1973) | mix_3465 | 3465 | — | — | — | — | — | — |
+| D39V base 989 paper 2ep (1973) | dedup_3135 | 3135 | 0.9116 | 0.8215 | 0.9411 | 0.9123 | 0.8228 | 0.500 |
+| D39V base 989 paper 2ep (1973) | sigma70_1864 | 1864 | 0.4372 | -0.1026 | 0.4599 | 0.5483 | 0.0637 | 0.586 |
+| D39V base 989 paper 2ep (1973) | multispecies_22582 | 22582 | 0.5085 | 0.0172 | 0.5295 | 0.5249 | 0.0587 | 0.444 |
 
 ## Notes
 - HF baseline is zero-shot `neuralbioinfo/prokbert-mini-promoter` (no fine-tuning).
-- Paper replica is `prokbert-mini` base fine-tuned on `bacterial_promoters train 223092` with paper faithful `80/10/10 2ep bs128 lr0.0004 wd0.01 warmup500`.
+- Paper replica is `prokbert-mini` base fine-tuned on `bacterial_promoters train 223092` with paper `80/10/10 2ep bs128 lr0.0004 wd0.01 warmup500 betas 0.95/0.98 eps 5e-05`.
 - Mix is `223k + d39v 1973 = 225k` fine-tuned 2ep same hyperparams.
 - D39V from promoter is `mini-promoter` continual fine-tuned on `d39v_full_989 1973` 2ep.
+- D39V base 989 is `prokbert-mini` base fine-tuned only on `d39v_full_989 1973` paper 2ep bs128 — pneumo-specific, collapses on E.coli (0.459/0.529 AUC) as expected, 0.966 on D39V, 0.941 on dedup 3135. Each in its own `finetuning_outputs/*/` folder (deletable).
 - Youden = max(TPR-FPR) on test set (optimistic, for benchmark comparison).
+- Data local: `data/bacterial_promoters/{train,test_sigma70,test_multispecies}.{parquet,csv,fasta}` 223k/1864/22582 + `datasets/d39v_full_989` 1973 and `dedup_3135` 3135.
 
 ## Model Paths
 - `HF mini-promoter (baseline)`: `neuralbioinfo/prokbert-mini-promoter`
-- `Paper replica 80/10/10 2ep (223k)`: `/home/fierro/pneumo_prokBERT/finetuning_outputs/paper_80_10_10_2ep/best`
-- `Mix 223k+d39v 2ep (225k)`: `/home/fierro/pneumo_prokBERT/finetuning_outputs/mix_223k_plus_d39v_2ep/best`
-- `D39V from promoter 2ep (989)`: `/home/fierro/pneumo_prokBERT/finetuning_outputs/d39v_from_promoter_2ep/best`
+- `Paper replica 80/10/10 2ep (223k)`: `finetuning_outputs/paper_80_10_10_2ep/best`
+- `Mix 223k+d39v 2ep (225k)`: `finetuning_outputs/mix_223k_plus_d39v_2ep/best`
+- `D39V from promoter 2ep (989)`: `finetuning_outputs/d39v_from_promoter_2ep/best`
+- `D39V base 989 paper 2ep (1973)`: `finetuning_outputs/d39v_989_paper_2ep/best` (22 steps 2.1s 5090, eval 0.959/0.918/0.980, test 0.912/0.824/0.955)

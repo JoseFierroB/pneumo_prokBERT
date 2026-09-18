@@ -14,11 +14,13 @@ This repository adapts ProkBERT, a genomic language model, to binary promoter pr
 
 ## Data
 
-- **Strain:** D39V, deduplicated.
-- **Size:** 989 positive (SigA+SigX) + 1000 negative = 1989 total sequences.
-- **Window:** 81 bp, `[-60, +20]` relative to TSS.
-- **Format:** CSVs with `segment,y` (`train`, `eval`, `test` splits provided).
-- **Upstream data for transfer:** `neuralbioinfo/bacterial_promoters` (223,092 train / 1,864 sigma70 / 22,582 multispecies, 81 bp) cached via Hugging Face Datasets.
+- **Strains:** D39V (989 pos SigA+SigX pooled + 1000 neg = 1989, dedup) + dedup integrations with TIGR4.
+- **Datasets (tracked, `datasets/` 0.5–0.7M):**
+  - `d39v_full_989` — 989+1000=1973 unique (16 dups removed, train 1381/eval 296/test 296, 70/15/15 seed 42, 81 bp).
+  - `d39v_tigr4_dedup_3135` — 1399 pos + 1736 neg = 3135 dedup exact (3465 naive −328 pos dups, 308 cross-strain).
+  - `d39v_tigr4_dedup_balanced_2798` — 1399+1399 balanced.
+- **Window:** 81 bp, `[-60, +20]` relative to TSS. Format: CSVs with `segment,y,id,sigma,strain,split`.
+- **Upstream data for transfer (local, `data/bacterial_promoters/` 70M, not versioned, see `.gitignore`):** `neuralbioinfo/bacterial_promoters` (223,092 train / 1,864 sigma70 / 22,582 multispecies, 81 bp) materialized locally as `parquet+csv+fasta` (9.6M/29M/25M train) from HF cache `38f748a`. Use via `load_dataset` or `pd.read_parquet`.
 
 ## Usage
 
@@ -48,13 +50,22 @@ pixi run python paper_replica.py \
 
 Outputs are written to `finetuning_outputs/` (checkpoints, logs, and the final model). This follows the paper configuration (AdamW, linear warmup, 2 epochs, batch 128/GPU).
 
-### Fine-tuning (D39V adaptation)
+### Fine-tuning (D39V adaptation — paper params, configurable)
 
 ```bash
+# Default: D39V 989 paper-aligned 2ep bs128 lr0.0004 wd0.01 warmup500 betas 0.95/0.98
 pixi run python finetuning.py
+# = pixi run python finetuning.py --dataset_dir datasets/d39v_full_989 --output_dir finetuning_outputs/d39v_989_paper_2ep --model_name . --num_train_epochs 2 --per_device_train_batch_size 128 --learning_rate 0.0004 --weight_decay 0.01 --warmup_steps 500
+
+# Other datasets (each in its own output folder, deletable)
+pixi run python finetuning.py --dataset_dir datasets/d39v_tigr4_dedup_3135 --output_dir finetuning_outputs/dedup_3135_2ep
+pixi run python finetuning.py --dataset_dir datasets/d39v_tigr4_dedup_balanced_2798 --output_dir finetuning_outputs/balanced_2798_2ep --num_train_epochs 3
+
+# Custom CSVs / hyperparams
+pixi run python finetuning.py --train_csv my/train.csv --eval_csv my/eval.csv --test_csv my/test.csv --output_dir finetuning_outputs/custom --learning_rate 0.0008 --weight_decay 0.02
 ```
 
-Uses the local D39V CSVs (`datasets/d39v_full_989/`) and the ProkBERT-mini weights in the repository root. This is the D39V-specific adaptation (SigA+SigX pooled, 989+1000).
+Defaults are paper §2.3.2 (AdamW 2 epochs, batch 128/GPU, wd 0.01, warmup 500, betas 0.95/0.98). All flags override defaults; no code edit needed. Uses `segment,y` 81 bp, LCA k=6 s=1, 78 tokens. The local D39V model is `base` `prokbert-mini` → `d39v_989_paper_2ep/best` (79M, 22 steps 2.1s 5090, eval 0.959/0.918/0.980).
 
 ## Pipeline
 
@@ -123,9 +134,9 @@ Shape notes: `s` in tokenization is the k-mer stride (`1`), `t=78` is the sequen
 
 ## Evaluation
 
-Metrics are Accuracy, MCC, F1, and ROC-AUC computed on `eval`/`test`. The `compute_metrics` callback uses `argmax` (threshold 0.5) for MCC/Accuracy and `softmax(logits)[:,1]` for ROC-AUC.
+Metrics are Accuracy, MCC, and ROC-AUC computed on `eval`/`test`. The `compute_metrics` callback uses `argmax` (threshold 0.5) for MCC/Accuracy and `softmax(logits)[:,1]` for ROC-AUC.
 
-Full results for the four models (HF mini-promoter baseline, paper replica 223k, mix 223k+d39v, D39V from promoter) across five datasets (D39V 1989, TIGR4 1476, mix 3465, sigma70 1864, multispecies 22582) are in [EVALUATION.md](EVALUATION.md) and [EVALUATION.json](EVALUATION.json) (4×5 table, @0.5 and @Youden).
+Full results for the five models (HF mini-promoter baseline, paper replica 223k, mix 223k+d39v, D39V from promoter, D39V base 989) across datasets (D39V 1989/1973, TIGR4 1476, mix 3465, dedup 3135, sigma70 1864, multispecies 22582) are in [EVALUATION.md](EVALUATION.md) and [EVALUATION.json](EVALUATION.json) (5×5 table, @0.5 and @Youden, 5090 k6s1). The D39V base model (`d39v_989_paper_2ep/best`, 0.966 AUC on D39V, 0.941 on dedup, collapses to 0.459/0.529 on sigma70/multispecies) is the expected pneumo-specific overfit.
 
 ## License
 

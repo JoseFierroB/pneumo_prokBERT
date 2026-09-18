@@ -217,11 +217,18 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# pneumo local data no versionar
+# pneumo local data no versionar (70M bacterial_promoters local cache)
 prokbert/data/
 prokbert/__pycache__/
 siga_sigx_out/
+data/bacterial_promoters/
+data/*.parquet
+data/*.csv
+data/*.fasta
 
 experiments_ws_20260916/
 finetuning_outputs/
 d39v_eval_*/
+.tmp/
+*.tmp
+/tmp/
