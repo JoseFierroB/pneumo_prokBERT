@@ -223,3 +223,5 @@ prokbert/__pycache__/
 siga_sigx_out/
 
 experiments_ws_20260916/
+finetuning_outputs/
+d39v_eval_*/

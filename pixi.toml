@@ -1,7 +1,7 @@
 [workspace]
 name = "pneumo-prokbert"
 version = "0.1.0"
-description = "ProkBERT pneumo fine-tuning 5090 - env aislado"
+description = "ProkBERT pneumo fine-tuning 5090 - isolated env"
 channels = ["conda-forge"]
 platforms = ["linux-64"]
 
@@ -22,4 +22,4 @@ numpy = "*"
 huggingface-hub = "*"
 tokenizers = "*"
 optuna = "*"
-# h5py requerido por prokbert sequtils (aunque no usado en finetuning)
+# h5py required by prokbert sequtils (although not used in fine-tuning)
