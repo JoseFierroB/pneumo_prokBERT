@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-Official ProkBERT fine-tuning - paper-faithful, from scratch with our sequences
+Paper replica / adaptation — ProkBERT fine-tuning faithful to the paper, from scratch with our sequences
 - Based on tools/prokbert/examples/finetuning.py (133 lines, helper + ProkBERTConfig + training_utils)
-- Without colab parts (!pip, raise), without broken code, same official logic
-- Minimal adaptation: HF dataset bacterial_promoters -> our own 81 bp pneumo CSVs
-  (D39V+TIGR4 dedup100 3135 or SigA 836) keeping the official BertForBinaryClassificationWithPooling
+  * Upstream file has a bug: `from prokbert.models import BertForBinaryClassificationWithPooling` does not exist
+    (correct class is `ProkBertForSequenceClassification` in `prokbert/models/megatronbert.py:1710`), so it cannot be executed without a shim.
+- This replica fixes that shim, removes colab parts (!pip, raise), and keeps the same official logic.
+- Minimal adaptation: HF dataset bacterial_promoters (223k) -> our own 81 bp pneumo CSVs
+  (D39V+TIGR4 dedup100 3135 or D39V 989) keeping the official BertForBinaryClassificationWithPooling (via ProkBertForSequenceClassification)
 """
 import os
 import sys

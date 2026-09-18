@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Train ProkBERT on SigA+SigX 668 train / 84 eval / 84 test
-Experimental — simple 3-epoch pilot (CPU, 4 threads)
+D39V adaptation — Train ProkBERT on D39V SigA+SigX 668 train / 84 eval / 84 test
+Simple 3-epoch pilot (CPU, 4 threads) for D39V pneumo data.
+For the paper replica on bacterial_promoters (223k), see paper_replica.py
 """
 import os
 os.environ.setdefault("OMP_NUM_THREADS", "4")

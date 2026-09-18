@@ -30,10 +30,14 @@ pixi install
 
 Environment is defined in `pixi.toml` (Python 3.10, PyTorch cu128, transformers, datasets, scikit-learn).
 
-### Fine-tuning (upstream)
+### Fine-tuning (paper replica, upstream 223k)
 
 ```bash
-pixi run python finetuning.py \
+# Paper replica / adaptation — faithful to tools/prokbert/examples/finetuning.py
+# Note: Upstream examples/finetuning.py has a bug (BertForBinaryClassificationWithPooling not found,
+# correct class is ProkBertForSequenceClassification in prokbert/models/megatronbert.py:1710)
+# This replica fixes that shim and is executable.
+pixi run python paper_replica.py \
   --model_name neuralbioinfo/prokbert-mini \
   --ftmodel mini_promoter \
   --model_outputpath finetuning_outputs \
@@ -44,13 +48,13 @@ pixi run python finetuning.py \
 
 Outputs are written to `finetuning_outputs/` (checkpoints, logs, and the final model). This follows the paper configuration (AdamW, linear warmup, 2 epochs, batch 128/GPU).
 
-### Fine-tuning (D39V)
+### Fine-tuning (D39V adaptation)
 
 ```bash
 pixi run python finetuning.py
 ```
 
-Uses the local D39V CSVs and the ProkBERT-mini weights in the repository root.
+Uses the local D39V CSVs (`datasets/d39v_full_989/`) and the ProkBERT-mini weights in the repository root. This is the D39V-specific adaptation (SigA+SigX pooled, 989+1000).
 
 ## Pipeline
 
