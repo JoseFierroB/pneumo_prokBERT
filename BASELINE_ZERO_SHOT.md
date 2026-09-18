@@ -13,9 +13,11 @@ Current phase: **zero-shot only**, no fine-tuning. Official models without retra
 
 Environment note: Use an environment with `MegatronBertModel` available (in promoter-tools it is the `tools/iPro-MP` env `ipro-mp`, not the pure `tools/prokbert` env). `torch CPU`, `transformers 4.57.6`.
 
-## Zero-shot results (2026-09-11, CPU single thread)
+## Zero-shot results (2026-09-11, CPU single thread; plus HF bacterial_promoters on 5090 2026-09-16)
 
 Compatible output: TSV `{ID, LABEL, PRED}`.
+
+### Pneumo D39V / TIGR4 (81 bp, CPU)
 
 | Dataset | N | mini AUC | minic AUC | mean_pos mini/minic | mean_neg |
 |---|---|---|---|---|---|
@@ -28,6 +30,20 @@ Reference promoter-tools REPORT: iPro-MP 0.953, LCNN 0.949, MLDSPP75* 0.957 on D
 Interpretation: ProkBERT zero-shot already exceeds the baseline on D39V; `-c` (kmer 1) generalizes better to the divergent SigX combox `TACGAATA`.
 
 CPU timings: mini 84s / 1989 sequences (~23 seq/s), minic 115s (~17 seq/s). Peak RAM ~0.8-1.1 GB.
+
+### Upstream bacterial_promoters with HF mini-promoter (81 bp, 5090, 0.5 threshold)
+
+Tested with `neuralbioinfo/prokbert-mini-promoter` `k6s1` `ProkBERTTokenizer` `trust_remote_code` on HF cache `38f748a 223k/1864/22582` (offline).
+
+| Split | N | Accuracy | MCC | F1 | ROC-AUC | Confusion [TN FP / FN TP] |
+|---|---|---|---|---|---|---|
+| test_sigma70 (E. coli sigma70) | 1864 (1000 neg / 864 pos) | 0.8509 | 0.7078 | 0.8489 | 0.9373 | [805 195 / 83 781] |
+| test_multispecies (33 species) | 22582 (11288 neg / 11294 pos) | 0.7950 | 0.5908 | 0.8001 | 0.8810 | [8692 2596 / 2033 9261] |
+| train (223k, in-distribution) | 223092 (111545 neg / 111547 pos) | — | — | — | — | not evaluated (training split) |
+
+5090 timings: `sigma70 15/15 batches 512` `~0.3s` `multispecies 177/177` `~3.8s`. Peak VRAM ~3672 MiB.
+
+Interpretation: HF mini-promoter zero-shot `sigma70 0.707 MCC` and `multispecies 0.590` match paper `0.74/0.62` within `0.03-0.04`; our 2-epoch replica from `mini` base reaches `0.654/0.430` and 3-epoch `0.646/0.471`, 2-epoch faithful `80/10/10` reaches `0.705/0.588` — close but below HF baseline, as expected without the full A100 DDP warmup/betas schedule.
 
 ## Embeddings (probe)
 
