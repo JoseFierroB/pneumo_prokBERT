@@ -43,13 +43,7 @@ Tested with `neuralbioinfo/prokbert-mini-promoter` `k6s1` `ProkBERTTokenizer` `t
 
 5090 timings: `sigma70 15/15 batches 512` `~0.3s` `multispecies 177/177` `~3.8s`. Peak VRAM ~3672 MiB.
 
-Interpretation: HF mini-promoter zero-shot `sigma70 0.707 MCC` and `multispecies 0.590` match paper `0.74/0.62` within `0.03-0.04`; our 2-epoch replica from `mini` base reaches `0.654/0.430` and 3-epoch `0.646/0.471`, 2-epoch faithful `80/10/10` reaches `0.705/0.588` — close but below HF baseline, as expected without the full A100 DDP warmup/betas schedule.
-
-## Embeddings (probe)
-
-`prokbert_pca_cls_421`: CLS 384d last layer, PCA 2D on D39V (SigA 150, SigX 21, None 100, Neg 150).
-Centroids PC1: Neg -6.578 | SigX 0.312 | None 2.874 | SigA 4.618 — SigX intermediate, consistent with divergence.
-See `output/plots/prokbert_pca_cls_421.{png,svg,pdf}` and `output/tables/prokbert_pca_cls_421.tsv` in promoter-tools.
+Interpretation: HF mini-promoter zero-shot `sigma70 0.707 MCC` and `multispecies 0.590` match paper `0.74/0.62` within `0.03-0.04`
 
 ## Usage
 
@@ -60,8 +54,3 @@ python infer_pneumo_prokbert.py --variant mini --pos positives_81bp.fasta --neg 
 python infer_pneumo_prokbert.py --variant minic --pos positives_81bp_SigA.fasta --neg negatives_81bp.fasta -o pred_siga_minic.tsv
 ```
 
-## Roadmap
-
-1. Fix minilong (vendor `models.py` or wait for upstream fix + 2-segment mean pooling).
-2. Binary pneumo-specific fine-tuning with `GroupKFold` by MMseqs2 clusters (2247 clusters) — SigX held-out only (N=21).
-3. Multiclass SigA / SigX / non-promoter.
