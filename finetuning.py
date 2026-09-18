@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-D39V adaptation — Train ProkBERT on D39V SigA+SigX 668 train / 84 eval / 84 test
-Simple 3-epoch pilot (CPU, 4 threads) for D39V pneumo data.
-For the paper replica on bacterial_promoters (223k), see paper_replica.py
+D39V adaptation — Train ProkBERT on D39V 989 dedup (1973 total: 989 pos + 1000 neg, 81 bp)
+Uses paper parameters: 2 epochs, batch 128, lr 0.0004, wd 0.01, warmup 500, betas 0.95/0.98
+Dataset: datasets/d39v_full_989 (train 1381 / eval 296 / test 296, stratify 70/15/15)
 """
 import os
 os.environ.setdefault("OMP_NUM_THREADS", "4")
@@ -28,18 +28,7 @@ set_seed(42)
 
 # --- tokenizer (patch vocab_size/save for Trainer) ---
 from prokbert.prokbert_tokenizer import ProkBERTTokenizer
-# patch vocab_size NotImplementedError
-try:
-    _orig_vocab = ProkBERTTokenizer.vocab_size
-    _is_broken = False
-    try:
-        tmp = ProkBERTTokenizer.__dict__.get('vocab_size')
-        if tmp is not None:
-            # test will fail later so patch anyway
-            pass
-    except: pass
-except: pass
-# apply unconditional compatible patch
+# Patch vocab_size
 ProkBERTTokenizer.vocab_size = property(lambda self: len(self.get_vocab()) if hasattr(self, 'get_vocab') else 4101)
 _orig_save = ProkBERTTokenizer.save_pretrained
 def _patched_save(self, save_directory, **kwargs):
@@ -55,11 +44,11 @@ ProkBERTTokenizer.save_pretrained = _patched_save
 tokenizer = ProkBERTTokenizer(tokenization_params={'kmer':6,'shift':1}, operation_space='sequence')
 print("Tokenizer k=6 s=1 ready")
 
-# --- data ---
+# --- data: D39V 989 dedup 1973 ---
 ds = load_dataset("csv", data_files={
-    "train": "train_siga_sigx_668.csv",
-    "eval": "eval_siga_sigx_84.csv",
-    "test": "test_siga_sigx_84.csv",
+    "train": "datasets/d39v_full_989/train.csv",
+    "eval": "datasets/d39v_full_989/eval.csv",
+    "test": "datasets/d39v_full_989/test.csv",
 })
 print(ds)
 
@@ -85,22 +74,28 @@ def compute_metrics(eval_pred):
         "roc_auc": roc_auc_score(labels, probs[:,1]),
     }
 
+# Paper faithful hyperparams for D39V (same as upstream 223k: 2ep, bs128, lr0.0004, wd0.01, warmup500, betas 0.95/0.98)
 args = TrainingArguments(
-    output_dir="./siga_sigx_out",
-    per_device_train_batch_size=16,
-    per_device_eval_batch_size=32,
-    learning_rate=5e-5,
-    num_train_epochs=3,
+    output_dir="./finetuning_outputs/d39v_989_paper_2ep",
+    per_device_train_batch_size=128,
+    per_device_eval_batch_size=128,
+    learning_rate=0.0004,
+    weight_decay=0.01,
+    num_train_epochs=2,
+    warmup_steps=500,
+    adam_beta1=0.95,
+    adam_beta2=0.98,
+    adam_epsilon=5e-05,
     eval_strategy="epoch",
     save_strategy="epoch",
     load_best_model_at_end=True,
     metric_for_best_model="mcc",
     greater_is_better=True,
     report_to="none",
-    fp16=USE_CUDA,  # minimal: enable fp16 only if CUDA is available (5090 benefits, CPU ignores)
+    fp16=USE_CUDA,
     bf16=False,
     seed=42,
-    logging_steps=10,
+    logging_steps=50,
     save_total_limit=2,
     disable_tqdm=False,
     dataloader_num_workers=0,
@@ -115,10 +110,10 @@ trainer = Trainer(
     compute_metrics=compute_metrics,
 )
 
-print("=== Training ===")
+print("=== Training D39V 989 paper params 2ep ===")
 trainer.train()
 print("=== Eval ===")
 print("eval:", trainer.evaluate(tokenized["eval"]))
 print("test:", trainer.evaluate(tokenized["test"]))
-trainer.save_model("./siga_sigx_final")
-print("Saved to ./siga_sigx_final")
+trainer.save_model("./finetuning_outputs/d39v_989_paper_2ep/best")
+print("Saved to ./finetuning_outputs/d39v_989_paper_2ep/best")
