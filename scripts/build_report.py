@@ -21,7 +21,7 @@ COLS = ["paper-test", "ecoli-sigma70", "multispecies", "d39v",
         "tigr4-high", "d39v-tigr4", "d39v-tigr4-dedup"]
 
 NOTES = """## Notes
-- HF baseline is zero-shot `neuralbioinfo/prokbert-mini-promoter` (no fine-tuning).
+- HF baseline is zero-shot `neuralbioinfo/prokbert-mini-promoter` (no fine-tuning here); it was upstream-fine-tuned on the full 223k train, so its `paper-test`/`paper-val` cells are `train_overlap`, not clean.
 - `paper223k-replica` reproduces the upstream 223k setup (80/10/10 seed 42, paper hyperparams, fp32); matches the released HF model within ±0.006.
 - `base-223k-d39v` / `base-223k-d39v-tigr4` use the parallel protocol (fit HF train_80 + pneumo train, combined val, locked tests); supersede the legacy full-train mix (see `legacy/`).
 - `base-d39v` / `base-d39v-tigr4` train from the true base with `--warmup_ratio 0.1` (paper warmup 500 caps LR on 22–36 steps).
@@ -64,6 +64,18 @@ def main():
                 f"| {alias} | {c} | {m['n']} | {m['acc_05']:.4f} | {m['mcc_05']:.4f} | "
                 f"{m['auc']:.4f} | {m['ap']:.4f} | {m['acc_y']:.4f} | {m['mcc_y']:.4f} | "
                 f"{m['youden_thr']:.3f} | {m['leakage']} |")
+    cis_path = os.path.join(args.reports_dir, "bootstrap_cis.json")
+    if os.path.exists(cis_path):
+        cis = json.load(open(cis_path))
+        lines += ["", f"## Significance (paired bootstrap, B=2000, threshold 0.5)",
+                  "| Dataset | Comparison (a − b) | Metric | Δ | 95% CI | p | 95% sig |",
+                  "|---|---|---|---|---|---|---|"]
+        for row in cis["comparisons"]:
+            for metric, v in row["metrics"].items():
+                lo, hi = v["ci95"]
+                lines.append(f"| {row['dataset']} | {row['a']} − {row['b']} | {metric} | "
+                             f"{v['delta']:+.4f} | [{lo:+.4f}, {hi:+.4f}] | {v['p']:.4f} | "
+                             f"{'yes' if v['sig95'] else 'no'} |")
     lines += ["", NOTES, "", "## Model Paths"]
     for alias in aliases:
         entry = models[alias]

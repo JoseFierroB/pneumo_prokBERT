@@ -1052,7 +1052,7 @@
       "youden_thr": 0.4441347122192383,
       "acc_y": 0.9285073957866428,
       "mcc_y": 0.8575566152891275,
-      "leakage": "clean"
+      "leakage": "train_overlap"
     },
     "ecoli-sigma70": {
       "n": 1864,
@@ -1257,7 +1257,7 @@
       "youden_thr": 0.6053057909011841,
       "acc_y": 0.9265800089645899,
       "mcc_y": 0.8535140301776859,
-      "leakage": "clean"
+      "leakage": "train_overlap"
     },
     "ecoli-sigma70": {
       "n": 1864,

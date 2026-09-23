@@ -137,25 +137,25 @@
       "paper-val": "selection_overlap"
     },
     "hfpromoter-d39v": {
-      "paper-test": "clean",
+      "paper-test": "train_overlap",
       "ecoli-sigma70": "clean",
       "multispecies": "clean",
       "d39v": "train_overlap",
       "tigr4-high": "clean",
       "d39v-tigr4": "train_overlap",
       "d39v-tigr4-dedup": "train_overlap",
-      "paper-val": "clean"
+      "paper-val": "train_overlap"
     },
     "hfpromoter-baseline": {
-      "paper-test": "clean",
+      "paper-test": "train_overlap",
       "ecoli-sigma70": "clean",
       "multispecies": "clean",
       "d39v": "clean",
       "tigr4-high": "clean",
       "d39v-tigr4": "clean",
       "d39v-tigr4-dedup": "clean",
-      "paper-val": "clean"
+      "paper-val": "train_overlap"
     }
   },
-  "note": "'clean' = clean of fine-tuning labels in this project (does not guarantee unseen during upstream pretraining)."
+  "note": "'clean' = unseen during all supervised training stages (ours and upstream). 'train_overlap' = seen during ours or upstream fine-tuning (e.g. HF mini-promoter was fine-tuned on the full 223k train, which contains paper-test/paper-val)."
 }

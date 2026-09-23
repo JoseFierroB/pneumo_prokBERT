@@ -41,14 +41,14 @@ Leakage flags: `clean` = clean of fine-tuning labels in this project; `train_ove
 | base-223k-d39v-tigr4 | tigr4-high | 1476 | 0.8760 | 0.7523 | 0.9396 | 0.9589 | 0.9079 | 0.8260 | 0.956 | train_overlap |
 | base-223k-d39v-tigr4 | d39v-tigr4 | 3465 | 0.9030 | 0.8074 | 0.9637 | 0.9746 | 0.9362 | 0.8769 | 0.956 | train_overlap |
 | base-223k-d39v-tigr4 | d39v-tigr4-dedup | 3135 | 0.8957 | 0.7924 | 0.9580 | 0.9661 | 0.9330 | 0.8679 | 0.956 | train_overlap |
-| hfpromoter-d39v | paper-test | 22310 | 0.9269 | 0.8553 | 0.9796 | 0.9822 | 0.9285 | 0.8576 | 0.444 | clean |
+| hfpromoter-d39v | paper-test | 22310 | 0.9269 | 0.8553 | 0.9796 | 0.9822 | 0.9285 | 0.8576 | 0.444 | train_overlap |
 | hfpromoter-d39v | ecoli-sigma70 | 1864 | 0.8578 | 0.7153 | 0.9378 | 0.9340 | 0.8680 | 0.7352 | 0.780 | clean |
 | hfpromoter-d39v | multispecies | 22582 | 0.8030 | 0.6077 | 0.8830 | 0.8901 | 0.8039 | 0.6109 | 0.545 | clean |
 | hfpromoter-d39v | d39v | 1989 | 0.9326 | 0.8656 | 0.9759 | 0.9820 | 0.9553 | 0.9115 | 0.955 | train_overlap |
 | hfpromoter-d39v | tigr4-high | 1476 | 0.8686 | 0.7371 | 0.9239 | 0.9458 | 0.9045 | 0.8157 | 0.968 | clean |
 | hfpromoter-d39v | d39v-tigr4 | 3465 | 0.9053 | 0.8108 | 0.9540 | 0.9669 | 0.9333 | 0.8697 | 0.966 | train_overlap |
 | hfpromoter-d39v | d39v-tigr4-dedup | 3135 | 0.8982 | 0.7949 | 0.9465 | 0.9558 | 0.9292 | 0.8587 | 0.966 | train_overlap |
-| hfpromoter-baseline | paper-test | 22310 | 0.9239 | 0.8480 | 0.9791 | 0.9817 | 0.9266 | 0.8535 | 0.605 | clean |
+| hfpromoter-baseline | paper-test | 22310 | 0.9239 | 0.8480 | 0.9791 | 0.9817 | 0.9266 | 0.8535 | 0.605 | train_overlap |
 | hfpromoter-baseline | ecoli-sigma70 | 1864 | 0.8509 | 0.7078 | 0.9373 | 0.9324 | 0.8659 | 0.7301 | 0.870 | clean |
 | hfpromoter-baseline | multispecies | 22582 | 0.7950 | 0.5908 | 0.8810 | 0.8867 | 0.8021 | 0.6080 | 0.761 | clean |
 | hfpromoter-baseline | d39v | 1989 | 0.8859 | 0.7787 | 0.9700 | 0.9780 | 0.9487 | 0.8980 | 0.974 | clean |
@@ -56,8 +56,26 @@ Leakage flags: `clean` = clean of fine-tuning labels in this project; `train_ove
 | hfpromoter-baseline | d39v-tigr4 | 3465 | 0.8623 | 0.7303 | 0.9493 | 0.9628 | 0.9255 | 0.8531 | 0.974 | clean |
 | hfpromoter-baseline | d39v-tigr4-dedup | 3135 | 0.8510 | 0.7102 | 0.9417 | 0.9507 | 0.9206 | 0.8402 | 0.974 | clean |
 
+## Significance (paired bootstrap, B=2000, threshold 0.5)
+| Dataset | Comparison (a − b) | Metric | Δ | 95% CI | p | 95% sig |
+|---|---|---|---|---|---|---|
+| multispecies | base-223k-d39v − hfpromoter-baseline | mcc | +0.0305 | [+0.0208, +0.0406] | 0.0000 | yes |
+| multispecies | base-223k-d39v − hfpromoter-baseline | auc | +0.0094 | [+0.0062, +0.0127] | 0.0000 | yes |
+| multispecies | base-223k-d39v-tigr4 − hfpromoter-baseline | mcc | -0.0087 | [-0.0192, +0.0013] | 0.0930 | no |
+| multispecies | base-223k-d39v-tigr4 − hfpromoter-baseline | auc | -0.0029 | [-0.0063, +0.0007] | 0.1170 | no |
+| ecoli-sigma70 | base-223k-d39v − hfpromoter-baseline | mcc | +0.0276 | [-0.0019, +0.0591] | 0.0700 | no |
+| ecoli-sigma70 | base-223k-d39v − hfpromoter-baseline | auc | -0.0002 | [-0.0085, +0.0080] | 0.9160 | no |
+| ecoli-sigma70 | base-223k-d39v-tigr4 − hfpromoter-baseline | mcc | +0.0286 | [-0.0023, +0.0585] | 0.0750 | no |
+| ecoli-sigma70 | base-223k-d39v-tigr4 − hfpromoter-baseline | auc | -0.0047 | [-0.0136, +0.0040] | 0.3020 | no |
+| ecoli-sigma70 | paper223k-replica − hfpromoter-baseline | mcc | -0.0026 | [-0.0326, +0.0282] | 0.8850 | no |
+| ecoli-sigma70 | paper223k-replica − hfpromoter-baseline | auc | -0.0055 | [-0.0141, +0.0033] | 0.2360 | no |
+| tigr4-high | base-d39v − hfpromoter-baseline | mcc | +0.1417 | [+0.1035, +0.1788] | 0.0000 | yes |
+| tigr4-high | base-d39v − hfpromoter-baseline | auc | +0.0107 | [-0.0038, +0.0249] | 0.1340 | no |
+| tigr4-high | base-223k-d39v − hfpromoter-baseline | mcc | +0.0854 | [+0.0552, +0.1150] | 0.0000 | yes |
+| tigr4-high | base-223k-d39v − hfpromoter-baseline | auc | +0.0067 | [-0.0006, +0.0143] | 0.0690 | no |
+
 ## Notes
-- HF baseline is zero-shot `neuralbioinfo/prokbert-mini-promoter` (no fine-tuning).
+- HF baseline is zero-shot `neuralbioinfo/prokbert-mini-promoter` (no fine-tuning here); it was upstream-fine-tuned on the full 223k train, so its `paper-test`/`paper-val` cells are `train_overlap`, not clean.
 - `paper223k-replica` reproduces the upstream 223k setup (80/10/10 seed 42, paper hyperparams, fp32); matches the released HF model within ±0.006.
 - `base-223k-d39v` / `base-223k-d39v-tigr4` use the parallel protocol (fit HF train_80 + pneumo train, combined val, locked tests); supersede the legacy full-train mix (see `legacy/`).
 - `base-d39v` / `base-d39v-tigr4` train from the true base with `--warmup_ratio 0.1` (paper warmup 500 caps LR on 22–36 steps).

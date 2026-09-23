@@ -98,7 +98,7 @@ trainer.save_model("finetuning_outputs/<run>/best")  # + run_info.json
 
 ## Evaluation
 
-Per cell @0.5 plus tuned Youden threshold: ACC, balACC, MCC, F1, ROC-AUC, PR-AUC; leakage flag `clean` / `train_overlap` / `selection_overlap`. Full table: [EVALUATION.md](EVALUATION.md). Headlines (clean sets): `base-223k-d39v` sigma70 MCC 0.7355/AUC 0.9371, multispecies 0.6213/0.8905 (above HF baseline); `base-d39v` TIGR4 0.9316 AUC; pneumo-only models collapse on sigma70/multispecies as expected.
+Per cell @0.5 plus tuned Youden threshold: ACC, balACC, MCC, F1, ROC-AUC, PR-AUC; leakage flag `clean` / `train_overlap` / `selection_overlap`. Full table: [EVALUATION.md](EVALUATION.md). Headlines (clean sets, paired bootstrap B=2000): `base-223k-d39v` multispecies MCC +0.031 [+0.021, +0.041] and AUC +0.009 [+0.006, +0.013] over HF (significant); sigma70 MCC +0.028, n.s. (p=0.070), AUC tied; `base-d39v` TIGR4 MCC +0.142 [+0.104, +0.179] (significant); pneumo-only models collapse on sigma70/multispecies as expected.
 
 Docs: [MODELS.md](MODELS.md), `models.json`, `datasets_eval.json`, `reports/model_matrix/`.
 

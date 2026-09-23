@@ -1,0 +1,187 @@
+{
+  "method": "paired bootstrap, B=2000, seed=42, threshold 0.5 for MCC",
+  "comparisons": [
+    {
+      "dataset": "multispecies",
+      "a": "base-223k-d39v",
+      "b": "hfpromoter-baseline",
+      "n": 22582,
+      "metrics": {
+        "mcc": {
+          "delta": 0.0305,
+          "ci95": [
+            0.0208,
+            0.0406
+          ],
+          "p": 0.0,
+          "sig95": true
+        },
+        "auc": {
+          "delta": 0.0094,
+          "ci95": [
+            0.0062,
+            0.0127
+          ],
+          "p": 0.0,
+          "sig95": true
+        }
+      }
+    },
+    {
+      "dataset": "multispecies",
+      "a": "base-223k-d39v-tigr4",
+      "b": "hfpromoter-baseline",
+      "n": 22582,
+      "metrics": {
+        "mcc": {
+          "delta": -0.0087,
+          "ci95": [
+            -0.0192,
+            0.0013
+          ],
+          "p": 0.093,
+          "sig95": false
+        },
+        "auc": {
+          "delta": -0.0029,
+          "ci95": [
+            -0.0063,
+            0.0007
+          ],
+          "p": 0.117,
+          "sig95": false
+        }
+      }
+    },
+    {
+      "dataset": "ecoli-sigma70",
+      "a": "base-223k-d39v",
+      "b": "hfpromoter-baseline",
+      "n": 1864,
+      "metrics": {
+        "mcc": {
+          "delta": 0.0276,
+          "ci95": [
+            -0.0019,
+            0.0591
+          ],
+          "p": 0.07,
+          "sig95": false
+        },
+        "auc": {
+          "delta": -0.0002,
+          "ci95": [
+            -0.0085,
+            0.008
+          ],
+          "p": 0.916,
+          "sig95": false
+        }
+      }
+    },
+    {
+      "dataset": "ecoli-sigma70",
+      "a": "base-223k-d39v-tigr4",
+      "b": "hfpromoter-baseline",
+      "n": 1864,
+      "metrics": {
+        "mcc": {
+          "delta": 0.0286,
+          "ci95": [
+            -0.0023,
+            0.0585
+          ],
+          "p": 0.075,
+          "sig95": false
+        },
+        "auc": {
+          "delta": -0.0047,
+          "ci95": [
+            -0.0136,
+            0.004
+          ],
+          "p": 0.302,
+          "sig95": false
+        }
+      }
+    },
+    {
+      "dataset": "ecoli-sigma70",
+      "a": "paper223k-replica",
+      "b": "hfpromoter-baseline",
+      "n": 1864,
+      "metrics": {
+        "mcc": {
+          "delta": -0.0026,
+          "ci95": [
+            -0.0326,
+            0.0282
+          ],
+          "p": 0.885,
+          "sig95": false
+        },
+        "auc": {
+          "delta": -0.0055,
+          "ci95": [
+            -0.0141,
+            0.0033
+          ],
+          "p": 0.236,
+          "sig95": false
+        }
+      }
+    },
+    {
+      "dataset": "tigr4-high",
+      "a": "base-d39v",
+      "b": "hfpromoter-baseline",
+      "n": 1476,
+      "metrics": {
+        "mcc": {
+          "delta": 0.1417,
+          "ci95": [
+            0.1035,
+            0.1788
+          ],
+          "p": 0.0,
+          "sig95": true
+        },
+        "auc": {
+          "delta": 0.0107,
+          "ci95": [
+            -0.0038,
+            0.0249
+          ],
+          "p": 0.134,
+          "sig95": false
+        }
+      }
+    },
+    {
+      "dataset": "tigr4-high",
+      "a": "base-223k-d39v",
+      "b": "hfpromoter-baseline",
+      "n": 1476,
+      "metrics": {
+        "mcc": {
+          "delta": 0.0854,
+          "ci95": [
+            0.0552,
+            0.115
+          ],
+          "p": 0.0,
+          "sig95": true
+        },
+        "auc": {
+          "delta": 0.0067,
+          "ci95": [
+            -0.0006,
+            0.0143
+          ],
+          "p": 0.069,
+          "sig95": false
+        }
+      }
+    }
+  ]
+}
