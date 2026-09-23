@@ -229,6 +229,8 @@ data/*.fasta
 experiments_ws_20260916/
 finetuning_outputs/
 d39v_eval_*/
+legacy/
+scripts/build_presentation_*.py
 .tmp/
 *.tmp
 /tmp/

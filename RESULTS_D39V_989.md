@@ -1,5 +1,7 @@
 # D39V 989 full dedup 1973 1381/296/296 — 5090 only cuda:0
 
+> Historical note: superseded by the canonical 7×7 matrix in [EVALUATION.md](EVALUATION.md) (`reports/model_matrix/`). The `d39v_989_paper_2ep` run it describes used a contaminated (pilot) init and was retired. Kept for provenance.
+
 **Dataset** `positives 989 (973 unique) + negatives 1000 =1973 dedup100` 16 dups in positives, 70/15/15 stratify `train1381 700/681 eval296 150/146 test296 150/146` 81bp
 
 **Fine-tuning** `train_d39v_989.py` paper-aligned k6s1 fp16 5090, default 3 epochs lr5e-05 + optuna 20 (lr1e-5-1e-4, wd0-0.3, warmup0-0.2, epochs3-6)

@@ -1,5 +1,7 @@
 # Pneumo-ProkBERT — zero-shot baseline (CPU)
 
+> Historical note: superseded by the canonical 7×7 matrix in [EVALUATION.md](EVALUATION.md) (`reports/model_matrix/`). Kept for provenance.
+
 Objective: Adapt ProkBERT to *Streptococcus pneumoniae* D39V / TIGR4 promoters (81 bp `[-60,+20]`).
 Current phase: **zero-shot only**, no fine-tuning. Official models without retraining.
 

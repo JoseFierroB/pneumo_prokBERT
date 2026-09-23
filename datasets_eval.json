@@ -1,0 +1,161 @@
+{
+  "tokenizer": {
+    "kmer": 6,
+    "shift": 1,
+    "normalize": "upper, U->T, strip",
+    "vocab_sha256": "09ac66138ad9a2a5cbf2ae7f4057021489986c85f2772ddf3b1d9a7c4e408603",
+    "vocab_lines": 4101
+  },
+  "hf_dataset": {
+    "id": "neuralbioinfo/bacterial_promoters",
+    "rev": "38f748a5ea68896c9467087e41c0210e5d5b5760",
+    "split_code": "train_test_split(test_size=0.2, seed=42) then test_size=0.5, seed=42",
+    "lib": "datasets 5.0.1"
+  },
+  "columns": {
+    "paper-test": {
+      "kind": "in-dist holdout (primary)",
+      "source": "hf train via split",
+      "ids_file": "reports/model_matrix/paper_test_22310_ids.txt",
+      "ids_sha256": "49a61e636397556b",
+      "n": 22310
+    },
+    "paper-val": {
+      "kind": "selection diagnostic (appendix, not ranked)",
+      "source": "hf train via split",
+      "ids_file": "reports/model_matrix/paper_val_22309_ids.txt",
+      "ids_sha256": "716c3c3320d22c23",
+      "n": 22309
+    },
+    "ecoli-sigma70": {
+      "kind": "external",
+      "source": "hf test_sigma70",
+      "n": 1864,
+      "balance": {
+        "y1": 864,
+        "y0": 1000
+      }
+    },
+    "multispecies": {
+      "kind": "external",
+      "source": "hf test_multispecies",
+      "n": 22582,
+      "balance": {
+        "y1": 11294,
+        "y0": 11288
+      }
+    },
+    "d39v": {
+      "kind": "pneumo benchmark",
+      "ws": "/home/fierro/promoter-tools/data/benchmark/canonical_15_datasets/1_d39v/{positives_81bp,negatives_81bp}.fasta",
+      "local": "/home/fierro/Desktop/promoter-tools/data/benchmark/canonical_15_datasets/1_d39v/{positives_81bp,negatives_81bp}.fasta",
+      "n": 1989,
+      "balance": {
+        "y1": 989,
+        "y0": 1000
+      }
+    },
+    "tigr4-high": {
+      "kind": "pneumo benchmark",
+      "ws": "/home/fierro/promoter-tools/data/benchmark/canonical_15_datasets/2_tigr4_high/{positives_81bp,negatives_81bp}.fasta",
+      "local": "/home/fierro/Desktop/promoter-tools/data/benchmark/canonical_15_datasets/2_tigr4_high/{positives_81bp,negatives_81bp}.fasta",
+      "n": 1476,
+      "balance": {
+        "y1": 738,
+        "y0": 738
+      }
+    },
+    "d39v-tigr4": {
+      "kind": "combined benchmark (naive)",
+      "ws": "/home/fierro/promoter-tools/data/benchmark/canonical_15_datasets/4_d39v_tigr4_high/{positives_81bp,negatives_81bp}.fasta",
+      "local": "/home/fierro/Desktop/promoter-tools/data/benchmark/canonical_15_datasets/4_d39v_tigr4_high/{positives_81bp,negatives_81bp}.fasta",
+      "n": 3465,
+      "balance": {
+        "y1": 1727,
+        "y0": 1738
+      }
+    },
+    "d39v-tigr4-dedup": {
+      "kind": "dedup audit (benchmark)",
+      "source": "datasets/d39v_tigr4_dedup_3135/all.csv",
+      "n": 3135,
+      "balance": {
+        "y1": 1399,
+        "y0": 1736
+      }
+    }
+  },
+  "leakage": {
+    "paper223k-replica": {
+      "paper-test": "clean",
+      "paper-val": "selection_overlap",
+      "ecoli-sigma70": "clean",
+      "multispecies": "clean",
+      "d39v": "clean",
+      "tigr4-high": "clean",
+      "d39v-tigr4": "clean",
+      "d39v-tigr4-dedup": "clean"
+    },
+    "base-d39v": {
+      "paper-test": "clean",
+      "ecoli-sigma70": "clean",
+      "multispecies": "clean",
+      "d39v": "train_overlap",
+      "tigr4-high": "clean",
+      "d39v-tigr4": "train_overlap",
+      "d39v-tigr4-dedup": "train_overlap",
+      "paper-val": "clean"
+    },
+    "base-d39v-tigr4": {
+      "paper-test": "clean",
+      "ecoli-sigma70": "clean",
+      "multispecies": "clean",
+      "d39v": "train_overlap",
+      "tigr4-high": "train_overlap",
+      "d39v-tigr4": "train_overlap",
+      "d39v-tigr4-dedup": "train_overlap",
+      "paper-val": "clean"
+    },
+    "base-223k-d39v": {
+      "paper-test": "clean",
+      "ecoli-sigma70": "clean",
+      "multispecies": "clean",
+      "d39v": "train_overlap",
+      "tigr4-high": "clean",
+      "d39v-tigr4": "train_overlap",
+      "d39v-tigr4-dedup": "train_overlap",
+      "paper-val": "selection_overlap"
+    },
+    "base-223k-d39v-tigr4": {
+      "paper-test": "clean",
+      "ecoli-sigma70": "clean",
+      "multispecies": "clean",
+      "d39v": "train_overlap",
+      "tigr4-high": "train_overlap",
+      "d39v-tigr4": "train_overlap",
+      "d39v-tigr4-dedup": "train_overlap",
+      "paper-val": "selection_overlap"
+    },
+    "hfpromoter-d39v": {
+      "paper-test": "clean",
+      "ecoli-sigma70": "clean",
+      "multispecies": "clean",
+      "d39v": "train_overlap",
+      "tigr4-high": "clean",
+      "d39v-tigr4": "train_overlap",
+      "d39v-tigr4-dedup": "train_overlap",
+      "paper-val": "clean"
+    },
+    "hfpromoter-baseline": {
+      "paper-test": "clean",
+      "ecoli-sigma70": "clean",
+      "multispecies": "clean",
+      "d39v": "clean",
+      "tigr4-high": "clean",
+      "d39v-tigr4": "clean",
+      "d39v-tigr4-dedup": "clean",
+      "paper-val": "clean"
+    }
+  },
+  "note": "'clean' = clean of fine-tuning labels in this project (does not guarantee unseen during upstream pretraining)."
+}

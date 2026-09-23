@@ -1,150 +1,112 @@
 # pneumo_prokBERT
 
-ProkBERT fine-tuning for *Streptococcus pneumoniae* D39V promoter classification.
+ProkBERT fine-tuning for *Streptococcus pneumoniae* (D39V, TIGR4) promoter classification.
 
-## Overview
-
-This repository adapts ProkBERT, a genomic language model, to binary promoter prediction in *S. pneumoniae* D39V. The task is promoter vs. non-promoter on 81 bp windows centered on the transcription start site `[-60, +20]`.
+Binary promoter vs. non-promoter on 81 bp windows centered on the TSS `[-60, +20]`.
+Seven variants in [MODELS.md](MODELS.md), compared on a 7×7 matrix ([EVALUATION.md](EVALUATION.md)) with per-cell leakage flags.
 
 ## Model
 
-- **Base:** ProkBERT-mini, Local Context-Aware (LCA) tokenization `k=6, s=1`, `hidden size 384`, `vocabulary ~4101`.
-- **Weights:** `config.json`, `model.safetensors`, and `vocab.txt` are included for offline use.
-- **Tokenizer:** Vendored `prokbert/prokbert_tokenizer.py`; `Trainer`-compatible saving is patched for CPU/GPU.
+- **Base:** `neuralbioinfo/prokbert-mini` (MLM), LCA tokenization `k=6, s=1`, hidden 384, vocab 4101.
+- **Init:** always from HF (`prokbert-mini` @ `feb2520a`, `mini-promoter` @ `8502f02`), pinned in `models.json`. Root `models.py` is retained (checkpoints load it via `auto_map`).
+- **Tokenizer:** vendored `prokbert/` (upstream untouched); runtime fixes in `prokbert_patches.py`.
 
 ## Data
 
-- **Strains:** D39V (989 pos SigA+SigX pooled + 1000 neg = 1989, dedup) + dedup integrations with TIGR4.
-- **Datasets (tracked, `datasets/` 0.5–0.7M):**
-  - `d39v_full_989` — 989+1000=1973 unique (16 dups removed, train 1381/eval 296/test 296, 70/15/15 seed 42, 81 bp).
-  - `d39v_tigr4_dedup_3135` — 1399 pos + 1736 neg = 3135 dedup exact (3465 naive −328 pos dups, 308 cross-strain).
-  - `d39v_tigr4_dedup_balanced_2798` — 1399+1399 balanced.
-- **Window:** 81 bp, `[-60, +20]` relative to TSS. Format: CSVs with `segment,y,id,sigma,strain,split`.
-- **Upstream data for transfer (local, `data/bacterial_promoters/` 70M, not versioned, see `.gitignore`):** `neuralbioinfo/bacterial_promoters` (223,092 train / 1,864 sigma70 / 22,582 multispecies, 81 bp) materialized locally as `parquet+csv+fasta` (9.6M/29M/25M train) from HF cache `38f748a`. Use via `load_dataset` or `pd.read_parquet`.
+- D39V: 989 raw positives (973 unique) + 1000 negatives.
+- Tracked (`datasets/`, ~2M):
+  - `d39v_full_989` — 973+1000=1973 (train 1381/eval 296/test 296, 70/15/15 seed 42).
+  - `d39v_tigr4_dedup_3135` — 1399+1736=3135 (3465 naive − 330 dups).
+  - `d39v_tigr4_dedup_balanced_2798` — 1399+1399.
+- Format: CSVs with `segment,y` (+`id`; +`sigma,strain,split` in `d39v_full_989`).
+- Upstream `neuralbioinfo/bacterial_promoters` rev `38f748a` (223,092 train / 1,864 sigma70 / 22,582 multispecies). Local copy in `data/bacterial_promoters/` (70M, git-ignored); scripts fall back to HF. Materialize after cloning:
+  ```bash
+  pixi run python - <<'PY'
+  from datasets import load_dataset
+  ds = load_dataset("neuralbioinfo/bacterial_promoters")
+  for split in ["train", "test_sigma70", "test_multispecies"]:
+      ds[split].to_pandas().to_parquet(f"data/bacterial_promoters/{split}.parquet")
+  PY
+  ```
 
 ## Usage
-
-### Install
 
 ```bash
 pixi install
 ```
+Env: `pixi.toml` (Python 3.10, PyTorch cu128, transformers, datasets, accelerate, biopython, scikit-learn, matplotlib).
 
-Environment is defined in `pixi.toml` (Python 3.10, PyTorch cu128, transformers, datasets, scikit-learn).
+Device auto-detects in all GPU scripts (best-free GPU, else CPU); override with `--gpu N` / `--cpu`.
+Check data readiness: `pixi run python scripts/fetch_data.py --data-dir datasets/d39v_full_989` (repeatable).
 
-### Fine-tuning (paper replica, upstream 223k)
-
-```bash
-# Paper replica / adaptation — aligned with tools/prokbert/examples/finetuning.py
-# Note: Upstream examples/finetuning.py has a bug (BertForBinaryClassificationWithPooling not found,
-# correct class is ProkBertForSequenceClassification in prokbert/models/megatronbert.py:1710)
-# This replica fixes that shim and is executable.
-pixi run python paper_replica.py \
-  --model_name neuralbioinfo/prokbert-mini \
-  --ftmodel mini_promoter \
-  --model_outputpath finetuning_outputs \
-  --num_train_epochs 2 \
-  --per_device_train_batch_size 128 \
-  --learning_rate 0.0004
-```
-
-Outputs are written to `finetuning_outputs/` (checkpoints, logs, and the final model). This follows the paper configuration (AdamW, linear warmup, 2 epochs, batch 128/GPU).
-
-### Fine-tuning (D39V adaptation — paper params, configurable)
+### Paper replica (upstream 223k)
 
 ```bash
-# Default: D39V 989 paper-aligned 2ep bs128 lr0.0004 wd0.01 warmup500 betas 0.95/0.98
-pixi run python finetuning.py
-# = pixi run python finetuning.py --dataset_dir datasets/d39v_full_989 --output_dir finetuning_outputs/d39v_989_paper_2ep --model_name . --num_train_epochs 2 --per_device_train_batch_size 128 --learning_rate 0.0004 --weight_decay 0.01 --warmup_steps 500
-
-# Other datasets (each in its own output folder, deletable)
-pixi run python finetuning.py --dataset_dir datasets/d39v_tigr4_dedup_3135 --output_dir finetuning_outputs/dedup_3135_2ep
-pixi run python finetuning.py --dataset_dir datasets/d39v_tigr4_dedup_balanced_2798 --output_dir finetuning_outputs/balanced_2798_2ep --num_train_epochs 3
-
-# Custom CSVs / hyperparams
-pixi run python finetuning.py --train_csv my/train.csv --eval_csv my/eval.csv --test_csv my/test.csv --output_dir finetuning_outputs/custom --learning_rate 0.0008 --weight_decay 0.02
+pixi run python paper_replica.py   # defaults = paper §2.3.2 (2ep, bs128, lr0.0004, wd0.01, warmup500)
 ```
+80/10/10 split of the 223,092 train, seed 42. Output: checkpoints, `run_info.json`, `best/`.
+Uses `ProkBertForSequenceClassification` (`prokbert/models/megatronbert.py`); upstream `examples/finetuning.py` imports `BertForBinaryClassificationWithPooling`, which does not exist.
 
-Defaults are paper §2.3.2 (AdamW 2 epochs, batch 128/GPU, wd 0.01, warmup 500, betas 0.95/0.98). All flags override defaults; no code edit needed. Uses `segment,y` 81 bp, LCA k=6 s=1, 78 tokens. The local D39V model is `base` `prokbert-mini` → `d39v_989_paper_2ep/best` (79M, 22 steps 2.1s 5090, eval 0.959/0.918/0.980).
+### Pneumo fine-tuning
+
+```bash
+pixi run python finetuning.py --warmup_ratio 0.1   # base mini on d39v_full_989
+pixi run python finetuning.py --dataset_dir datasets/d39v_tigr4_dedup_3135 --output_dir finetuning_outputs/base_d39v_tigr4_2ep --warmup_ratio 0.1
+pixi run python finetuning.py --train_csv my/train.csv --eval_csv my/eval.csv --test_csv my/test.csv --output_dir finetuning_outputs/custom --learning_rate 0.0008
+```
+Paper params except warmup: `--warmup_steps 500` suits full runs; on 22–36 steps it caps LR at 4e-4·steps/500, so small runs use `--warmup_ratio 0.1`. Every run writes `run_info.json` + `best/` in its own folder. See `finetuning.py --help` for all flags.
+
+### Mixed training (223k + data dir)
+
+```bash
+# Fit HF train_80 + data train | select on combined val (MCC) | locked: HF test_10 + data test + sigma70 + multispecies
+pixi run python scripts/train_mix223k.py --data-dir datasets/d39v_full_989 --output_dir finetuning_outputs/base_223k_d39v_2ep
+pixi run python scripts/train_mix223k.py --data-dir datasets/d39v_full_989 --dry_run
+```
+`--data-dir` takes any folder with `train.csv/eval.csv/test.csv`; run name = its basename. Paper hyperparams (fp32, warmup 500, eval/save 50/500, best by MCC); writes `run_info.json` + `data_manifest.json`.
+
+### Evaluation matrix (7 models × 7 datasets)
+
+```bash
+pixi run python scripts/eval_matrix.py
+pixi run python scripts/eval_matrix.py --models base-223k-d39v hfpromoter-baseline --datasets ecoli-sigma70
+pixi run python scripts/build_report.py   # regenerate EVALUATION.md/json + cards from metrics.json (same selectors)
+```
+Outputs: `reports/model_matrix/metrics.json`, `summary_metrics.csv`, `plots/roc_pr__<dataset>.png`; per-cell `.npz` (ignored) in `finetuning_outputs/eval_matrix_probs/`.
 
 ## Pipeline
 
-### Pseudocode
-
 ```python
-# 1. Load data
-dataset = load_dataset("neuralbioinfo/bacterial_promoters")  # or local CSVs: segment,y
-train_db, eval_db = dataset["train"].to_pandas(), dataset["test_sigma70"].to_pandas()
-
-# 2. Tokenization (LCA k=6 s=1) -> 76 k-mers + [CLS]/[SEP] = 78 tokens
-tokenizer = ProkBERTTokenizer(tokenization_params={'kmer':6,'shift':1})
-X, y, _ = get_torch_data_from_segmentdb_classification(tokenizer, train_db)
-# X: (N, 78), y: (N,)  attention_mask = (input_ids != PAD)
-
-# 3. Model
-pretrained, tokenizer = get_default_pretrained_model_parameters("neuralbioinfo/prokbert-mini", "MegatronBertModel")
-model = ProkBertForSequenceClassification(pretrained.config)  # weighting_layer + classifier
-model.bert.load_state_dict(pretrained.bert.state_dict(), strict=False)
-
-# 4. Trainer
-args = TrainingArguments(per_device_train_batch_size=128, learning_rate=0.0004,
-                         num_train_epochs=2, weight_decay=0.01, warmup_steps=500)
-trainer = Trainer(model=model, args=args,
-                  train_dataset=ProkBERTTrainingDatasetPT(X_train, y_train),
-                  eval_dataset=ProkBERTTrainingDatasetPT(X_eval, y_eval),
-                  compute_metrics=compute_metrics_eval_prediction)
+ds = load_dataset("csv", data_files={"train": ..., "eval": ..., "test": ...})  # or bacterial_promoters
+tokenizer = ProkBERTTokenizer(tokenization_params={'kmer': 6, 'shift': 1}, operation_space='sequence')  # 76 k-mers + CLS/SEP = 78 tokens
+tokenized = ds.map(tokenize_function, batched=True)  # input_ids, attention_mask, labels
+model = AutoModelForSequenceClassification.from_pretrained(init, trust_remote_code=True)  # head fresh (inherited for hfpromoter-*)
+args = TrainingArguments(bs128, lr0.0004, 2ep, wd0.01, warmup, seed42)  # warmup_ratio 0.1 on small datasets
+trainer = Trainer(model, args, train_dataset=..., eval_dataset=...,  # best checkpoint by val MCC
+                  data_collator=DataCollatorWithPadding(tokenizer), compute_metrics=compute_metrics)
 trainer.train()
-model.save_pretrained("finetuning_outputs/neuralbioinfo/prokbert-mini")
+trainer.save_model("finetuning_outputs/<run>/best")  # + run_info.json
 ```
 
-### Diagram
-
 ```
-81 bp segment
-    |
-    v
-[LCA k=6 s=1]  76 k-mers + [CLS]/[SEP] = 78 tokens (vocab 4101)
-    |
-    v
-Rectangular batch  B x 78  (input_ids, attention_mask)
-    |
-    v
-ProkBertModel (6 layers, hidden 384)
-    |
-    v
-sequence_output  B x 78 x 384
-    |
-    v
-weighting_layer Linear(384->1)  B x 78 x 1  (token scores)
-    |
-    v
-masked_attention_pool  softmax(dim=1)  B x 78 x 1
-    |
-    v
-pooled  B x 384  = sum(weights * sequence_output, dim=1)
-    |
-    v
-classifier Linear(384->2)  B x 2  (logits)
-    |
-    v
-CrossEntropy  promoter vs non-promoter
+81 bp → [LCA k6s1] 76 k-mers + [CLS]/[SEP] = 78 tokens (vocab 4101)
+  → ProkBertModel (6L, hidden 384) → B×78×384
+  → weighting_layer Linear(384→1) → masked_attention_pool softmax(dim=1)
+  → pooled B×384 → classifier Linear(384→2) → CrossEntropy
 ```
-
-Shape notes: `s` in tokenization is the k-mer stride (`1`), `t=78` is the sequence length in tokens (dimension for softmax). `B` is the batch size.
+`hfpromoter-*` use the HF pooler variant instead (113 keys); documented per model in `reports/model_matrix/<alias>/model_card.md`.
 
 ## Evaluation
 
-Metrics are Accuracy, MCC, and ROC-AUC computed on `eval`/`test`. The `compute_metrics` callback uses `argmax` (threshold 0.5) for MCC/Accuracy and `softmax(logits)[:,1]` for ROC-AUC.
+Per cell @0.5 plus tuned Youden threshold: ACC, balACC, MCC, F1, ROC-AUC, PR-AUC; leakage flag `clean` / `train_overlap` / `selection_overlap`. Full table: [EVALUATION.md](EVALUATION.md). Headlines (clean sets): `base-223k-d39v` sigma70 MCC 0.7355/AUC 0.9371, multispecies 0.6213/0.8905 (above HF baseline); `base-d39v` TIGR4 0.9316 AUC; pneumo-only models collapse on sigma70/multispecies as expected.
 
-Full results for the five models (HF mini-promoter baseline, paper replica 223k, mix 223k+d39v, D39V from promoter, D39V base 989) across datasets (D39V 1989/1973, TIGR4 1476, mix 3465, dedup 3135, sigma70 1864, multispecies 22582) are in [EVALUATION.md](EVALUATION.md) and [EVALUATION.json](EVALUATION.json) (5×5 table, @0.5 and @Youden, 5090 k6s1). The D39V base model (`d39v_989_paper_2ep/best`, 0.966 AUC on D39V, 0.941 on dedup, collapses to 0.459/0.529 on sigma70/multispecies) is the expected pneumo-specific overfit.
+Docs: [MODELS.md](MODELS.md), `models.json`, `datasets_eval.json`, `reports/model_matrix/`.
 
 ## License
 
-MIT. ProkBERT is licensed under the terms provided by the original authors; see `tools/prokbert` for details.
+Our code and docs: MIT (see `LICENSE`). `prokbert/` is vendored upstream code under its original terms.
 
 ## Citation
-
-If you use this repository, please cite ProkBERT:
 
 ```bibtex
 @article{ProkBERT2024,
