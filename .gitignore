@@ -231,6 +231,7 @@ finetuning_outputs/
 d39v_eval_*/
 legacy/
 scripts/build_presentation_*.py
+energy/
 .tmp/
 *.tmp
 /tmp/

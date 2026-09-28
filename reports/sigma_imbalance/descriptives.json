@@ -1,0 +1,367 @@
+{
+  "splits": {
+    "train": {
+      "n": 1381,
+      "n_pos": 681,
+      "tags": {
+        "None": 353,
+        "SigA": 241,
+        "CcpA": 15,
+        "SigX": 15,
+        "None-LOWCONF": 11,
+        "SigA-LOWCONF": 11,
+        "CiaR": 5,
+        "BlpR": 4,
+        "Rex": 4,
+        "MtaR": 4,
+        "CmbR": 3,
+        "PurR": 3,
+        "FabT": 2,
+        "CiaR-LOWCONF": 2,
+        "TreR": 1,
+        "LiaR": 1,
+        "DnaA": 1,
+        "ArgR": 1,
+        "GalR": 1,
+        "MalR": 1,
+        "CodY": 1,
+        "MntR": 1
+      }
+    },
+    "eval": {
+      "n": 296,
+      "n_pos": 146,
+      "tags": {
+        "SigA": 64,
+        "None": 62,
+        "SigA-LOWCONF": 6,
+        "CiaR": 3,
+        "CcpA": 2,
+        "SigX": 2,
+        "PipR": 1,
+        "GalR": 1,
+        "CiaR-LOWCONF": 1,
+        "MalR": 1,
+        "Rex": 1,
+        "LacR": 1,
+        "BlpR": 1
+      }
+    },
+    "test": {
+      "n": 296,
+      "n_pos": 146,
+      "tags": {
+        "SigA": 68,
+        "None": 63,
+        "SigX": 4,
+        "CodY": 2,
+        "CcpA": 2,
+        "CmbR": 2,
+        "DeoR": 1,
+        "MalR": 1,
+        "CiaR": 1,
+        "MntR": 1,
+        "SczA": 1
+      }
+    },
+    "all": {
+      "n": 1973,
+      "n_pos": 973,
+      "tags": {
+        "None": 478,
+        "SigA": 373,
+        "SigX": 21,
+        "CcpA": 19,
+        "SigA-LOWCONF": 17,
+        "None-LOWCONF": 11,
+        "CiaR": 9,
+        "CmbR": 5,
+        "Rex": 5,
+        "BlpR": 5,
+        "MtaR": 4,
+        "CodY": 3,
+        "CiaR-LOWCONF": 3,
+        "MalR": 3,
+        "PurR": 3,
+        "FabT": 2,
+        "MntR": 2,
+        "GalR": 2,
+        "ArgR": 1,
+        "TreR": 1,
+        "LiaR": 1,
+        "DnaA": 1,
+        "PipR": 1,
+        "LacR": 1,
+        "DeoR": 1,
+        "SczA": 1
+      }
+    }
+  },
+  "fragile": [
+    {
+      "split": "train",
+      "tag": "BlpR",
+      "n": 4
+    },
+    {
+      "split": "train",
+      "tag": "Rex",
+      "n": 4
+    },
+    {
+      "split": "train",
+      "tag": "MtaR",
+      "n": 4
+    },
+    {
+      "split": "train",
+      "tag": "CmbR",
+      "n": 3
+    },
+    {
+      "split": "train",
+      "tag": "PurR",
+      "n": 3
+    },
+    {
+      "split": "train",
+      "tag": "FabT",
+      "n": 2
+    },
+    {
+      "split": "train",
+      "tag": "CiaR-LOWCONF",
+      "n": 2
+    },
+    {
+      "split": "train",
+      "tag": "TreR",
+      "n": 1
+    },
+    {
+      "split": "train",
+      "tag": "LiaR",
+      "n": 1
+    },
+    {
+      "split": "train",
+      "tag": "DnaA",
+      "n": 1
+    },
+    {
+      "split": "train",
+      "tag": "ArgR",
+      "n": 1
+    },
+    {
+      "split": "train",
+      "tag": "GalR",
+      "n": 1
+    },
+    {
+      "split": "train",
+      "tag": "MalR",
+      "n": 1
+    },
+    {
+      "split": "train",
+      "tag": "CodY",
+      "n": 1
+    },
+    {
+      "split": "train",
+      "tag": "MntR",
+      "n": 1
+    },
+    {
+      "split": "eval",
+      "tag": "CiaR",
+      "n": 3
+    },
+    {
+      "split": "eval",
+      "tag": "CcpA",
+      "n": 2
+    },
+    {
+      "split": "eval",
+      "tag": "SigX",
+      "n": 2
+    },
+    {
+      "split": "eval",
+      "tag": "PipR",
+      "n": 1
+    },
+    {
+      "split": "eval",
+      "tag": "GalR",
+      "n": 1
+    },
+    {
+      "split": "eval",
+      "tag": "CiaR-LOWCONF",
+      "n": 1
+    },
+    {
+      "split": "eval",
+      "tag": "MalR",
+      "n": 1
+    },
+    {
+      "split": "eval",
+      "tag": "Rex",
+      "n": 1
+    },
+    {
+      "split": "eval",
+      "tag": "LacR",
+      "n": 1
+    },
+    {
+      "split": "eval",
+      "tag": "BlpR",
+      "n": 1
+    },
+    {
+      "split": "test",
+      "tag": "SigX",
+      "n": 4
+    },
+    {
+      "split": "test",
+      "tag": "CodY",
+      "n": 2
+    },
+    {
+      "split": "test",
+      "tag": "CcpA",
+      "n": 2
+    },
+    {
+      "split": "test",
+      "tag": "CmbR",
+      "n": 2
+    },
+    {
+      "split": "test",
+      "tag": "DeoR",
+      "n": 1
+    },
+    {
+      "split": "test",
+      "tag": "MalR",
+      "n": 1
+    },
+    {
+      "split": "test",
+      "tag": "CiaR",
+      "n": 1
+    },
+    {
+      "split": "test",
+      "tag": "MntR",
+      "n": 1
+    },
+    {
+      "split": "test",
+      "tag": "SczA",
+      "n": 1
+    }
+  ],
+  "singletons": [
+    "ArgR",
+    "DeoR",
+    "DnaA",
+    "LacR",
+    "LiaR",
+    "PipR",
+    "SczA",
+    "TreR"
+  ],
+  "lowconf": {
+    "CiaR-LOWCONF": 3,
+    "None-LOWCONF": 11,
+    "SigA-LOWCONF": 17
+  },
+  "stratification": {
+    "train": {
+      "frac": 0.6999,
+      "observed": {
+        "SigA": 241,
+        "SigX": 15,
+        "None": 353
+      },
+      "expected": {
+        "SigA": 261.08,
+        "SigX": 14.7,
+        "None": 334.58
+      }
+    },
+    "eval": {
+      "frac": 0.15,
+      "observed": {
+        "SigA": 64,
+        "SigX": 2,
+        "None": 62
+      },
+      "expected": {
+        "SigA": 55.96,
+        "SigX": 3.15,
+        "None": 71.71
+      }
+    },
+    "test": {
+      "frac": 0.15,
+      "observed": {
+        "SigA": 68,
+        "SigX": 4,
+        "None": 63
+      },
+      "expected": {
+        "SigA": 55.96,
+        "SigX": 3.15,
+        "None": 71.71
+      }
+    }
+  },
+  "gc": {
+    "SigA": {
+      "n": 373,
+      "mean": 0.2944,
+      "std": 0.051
+    },
+    "SigX": {
+      "n": 21,
+      "mean": 0.2975,
+      "std": 0.0463
+    },
+    "None": {
+      "n": 478,
+      "mean": 0.3049,
+      "std": 0.0702
+    },
+    "neg": {
+      "n": 1000,
+      "mean": 0.4125,
+      "std": 0.0633
+    }
+  },
+  "tigr4": {
+    "metadata_rows": 738,
+    "sigma": {
+      "SigA": 278,
+      "ComX": 6
+    },
+    "minus10_available": 0,
+    "dedup_tigr4_rows": 1162,
+    "dedup_join_rate_all": 0.3666,
+    "dedup_join_rate_pos": 1.0,
+    "note": "metadata covers positives only; negatives cannot join by design",
+    "sigx_pool": {
+      "d39v_sigx": 21,
+      "tigr4_comx": 6,
+      "combined": 27
+    }
+  }
+}

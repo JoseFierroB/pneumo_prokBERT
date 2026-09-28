@@ -16,8 +16,8 @@ Notes:
 
 Usage:
   pixi run python paper_replica.py
-  pixi run python paper_replica.py --dataset_dir data/bacterial_promoters --output_dir finetuning_outputs/paper_80_10_10_2ep
-  pixi run python paper_replica.py --model_name neuralbioinfo/prokbert-mini-promoter --num_train_epochs 3 --output_dir finetuning_outputs/paper_promoter_3ep
+  pixi run python paper_replica.py --dataset-dir data/bacterial_promoters --output-dir finetuning_outputs/mini_223k_replica_2ep
+  pixi run python paper_replica.py --model-name neuralbioinfo/prokbert-mini-promoter --num-train-epochs 3 --output-dir finetuning_outputs/paper_promoter_3ep
   pixi run python paper_replica.py --help
 """
 import os
@@ -27,49 +27,57 @@ os.environ.setdefault("OPENBLAS_NUM_THREADS", "4")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 import argparse
+import hashlib
 import sys
 sys.path.insert(0, ".")
 import torch
 torch.set_num_threads(4)
 print(f"torch {torch.__version__} threads {torch.get_num_threads()} cuda {torch.cuda.is_available()}")
 from scripts.common import add_device_args, resolve_device
+from scripts.metrics import trainer_compute_metrics
 
 from datasets import load_dataset
 from transformers import TrainingArguments, Trainer, DataCollatorWithPadding, set_seed
-from sklearn.metrics import matthews_corrcoef, accuracy_score, roc_auc_score, f1_score
-import numpy as np
-
 from prokbert_patches import apply_tokenizer_patches, write_run_info
 apply_tokenizer_patches()
 
 from prokbert.prokbert_tokenizer import ProkBERTTokenizer
 from prokbert.models.megatronbert import ProkBertForSequenceClassification
 
+EXPECTED = {
+    "train_80": 178473, "val_10": 22309, "test_10": 22310,
+    "val_sha": "716c3c3320d22c23", "test_sha": "49a61e636397556b",
+}
+
+
+def sha_ids(ids):
+    return hashlib.sha256(("\n".join(ids) + "\n").encode()).hexdigest()
+
 
 def parse_args():
     p = argparse.ArgumentParser(description="ProkBERT paper replica / adaptation (bacterial_promoters, k=6 s=1, 81 bp)")
     # data
-    p.add_argument("--dataset_dir", type=str, default="data/bacterial_promoters",
+    p.add_argument("--dataset-dir", type=str, default="data/bacterial_promoters",
                    help="Local dir with train/test_sigma70/test_multispecies .parquet or .csv; if missing, uses HF neuralbioinfo/bacterial_promoters")
     p.add_argument("--seed", type=int, default=42, help="Seed for split and training")
     # model / output
-    p.add_argument("--model_name", type=str, default="neuralbioinfo/prokbert-mini",
+    p.add_argument("--model-name", type=str, default="neuralbioinfo/prokbert-mini",
                    help="HF model id or local path (default: base neuralbioinfo/prokbert-mini)")
-    p.add_argument("--output_dir", type=str, default="finetuning_outputs/paper_80_10_10_2ep",
+    p.add_argument("--output-dir", type=str, default="finetuning_outputs/mini_223k_replica_2ep",
                    help="Output dir (best saved to OUTPUT_DIR/best; one folder per run, deletable)")
     # paper hyperparams (defaults §2.3.2)
-    p.add_argument("--num_train_epochs", type=int, default=2, help="Paper: 2 epochs")
-    p.add_argument("--per_device_train_batch_size", type=int, default=128, help="Paper: 128/GPU")
-    p.add_argument("--per_device_eval_batch_size", type=int, default=128, help="Eval batch size")
-    p.add_argument("--learning_rate", type=float, default=0.0004, help="Paper: 0.0004 (AdamW)")
-    p.add_argument("--weight_decay", type=float, default=0.01, help="Paper: 0.01")
-    p.add_argument("--warmup_steps", type=int, default=500, help="Paper: linear warmup 500")
-    p.add_argument("--adam_beta1", type=float, default=0.95, help="Paper: 0.95")
-    p.add_argument("--adam_beta2", type=float, default=0.98, help="Paper: 0.98")
-    p.add_argument("--adam_epsilon", type=float, default=5e-05, help="Paper: 5e-05")
-    p.add_argument("--eval_steps", type=int, default=50, help="Eval every N steps (as in the 223k replica)")
-    p.add_argument("--save_steps", type=int, default=500, help="Save every N steps (multiple of eval_steps)")
-    p.add_argument("--logging_steps", type=int, default=50, help="Log every N steps")
+    p.add_argument("--num-train-epochs", type=int, default=2, help="Paper: 2 epochs")
+    p.add_argument("--per-device-train-batch-size", type=int, default=128, help="Paper: 128/GPU")
+    p.add_argument("--per-device-eval-batch-size", type=int, default=128, help="Eval batch size")
+    p.add_argument("--learning-rate", type=float, default=0.0004, help="Paper: 0.0004 (AdamW)")
+    p.add_argument("--weight-decay", type=float, default=0.01, help="Paper: 0.01")
+    p.add_argument("--warmup-steps", type=int, default=500, help="Paper: linear warmup 500")
+    p.add_argument("--adam-beta1", type=float, default=0.95, help="Paper: 0.95")
+    p.add_argument("--adam-beta2", type=float, default=0.98, help="Paper: 0.98")
+    p.add_argument("--adam-epsilon", type=float, default=5e-05, help="Paper: 5e-05")
+    p.add_argument("--eval-steps", type=int, default=50, help="Eval every N steps (as in the 223k replica)")
+    p.add_argument("--save-steps", type=int, default=500, help="Save every N steps (multiple of eval_steps)")
+    p.add_argument("--logging-steps", type=int, default=50, help="Log every N steps")
     p.add_argument("--kmer", type=int, default=6, help="LCA kmer (default 6)")
     p.add_argument("--shift", type=int, default=1, help="LCA shift (default 1)")
     p.add_argument("--fp16", action="store_true", help="Enable fp16 (paper used fp32 on A100)")
@@ -105,6 +113,9 @@ def main():
     train_split, temp = tmp["train"], tmp["test"]
     val_test = temp.train_test_split(test_size=0.5, seed=args.seed)
     val_split, test_split = val_test["train"], val_test["test"]
+    assert (len(train_split), len(val_split), len(test_split)) == (EXPECTED["train_80"], EXPECTED["val_10"], EXPECTED["test_10"])
+    assert sha_ids(val_split["segment_id"])[:16] == EXPECTED["val_sha"], "val split IDs differ from manifest"
+    assert sha_ids(test_split["segment_id"])[:16] == EXPECTED["test_sha"], "test split IDs differ from manifest"
     print(f"Split 80/10/10 seed {args.seed}: train {len(train_split)} val {len(val_split)} test {len(test_split)}")
 
     independent = {k: ds[k] for k in ("test_sigma70", "test_multispecies") if k in ds}
@@ -126,21 +137,6 @@ def main():
     model = ProkBertForSequenceClassification.from_pretrained(args.model_name, trust_remote_code=True, num_labels=2)
     print(f"Model loaded: {model.__class__.__name__} hidden {model.config.hidden_size} layers {model.config.num_hidden_layers}")
     model.to(device)
-
-    def compute_metrics(eval_pred):
-        logits, labels = eval_pred
-        preds = np.argmax(logits, axis=-1)
-        probs = np.exp(logits) / np.sum(np.exp(logits), axis=-1, keepdims=True)
-        try:
-            auc = roc_auc_score(labels, probs[:, 1])
-        except ValueError:
-            auc = float("nan")
-        return {
-            "mcc": matthews_corrcoef(labels, preds),
-            "accuracy": accuracy_score(labels, preds),
-            "f1": f1_score(labels, preds),
-            "roc_auc": auc,
-        }
 
     if args.bf16:
         precision = {"bf16": True, "fp16": False}
@@ -200,7 +196,7 @@ def main():
         train_dataset=tokenized["train"],
         eval_dataset=tokenized["val"],
         data_collator=DataCollatorWithPadding(tokenizer=tokenizer),
-        compute_metrics=compute_metrics,
+        compute_metrics=trainer_compute_metrics,
     )
 
     print(f"=== Training paper replica {args.num_train_epochs}ep from {args.model_name} ===")

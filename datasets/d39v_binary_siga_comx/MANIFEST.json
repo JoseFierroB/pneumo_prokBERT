@@ -1,0 +1,29 @@
+{
+  "source": "datasets/d39v_full_989/all.csv tags (SigX=21 vs SigA+SigA-LOWCONF=390)",
+  "seed": 42,
+  "method": "70/15/15 stratified; tag column kept for audit",
+  "counts": {
+    "train": {
+      "n": 287,
+      "pos": 15
+    },
+    "eval": {
+      "n": 62,
+      "pos": 3
+    },
+    "test": {
+      "n": 62,
+      "pos": 3
+    },
+    "all": {
+      "n": 411,
+      "pos": 21
+    }
+  },
+  "files_sha16": {
+    "train.csv": "1d728ad1b302cb15",
+    "eval.csv": "17845d0db60643a6",
+    "test.csv": "087037e0285b96bc",
+    "all.csv": "cd2e32f42da25534"
+  }
+}

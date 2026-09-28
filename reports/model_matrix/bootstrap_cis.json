@@ -3,182 +3,78 @@
   "comparisons": [
     {
       "dataset": "multispecies",
-      "a": "base-223k-d39v",
-      "b": "hfpromoter-baseline",
+      "a": "mini-223k-d39v-tigr4",
+      "b": "promoter-baseline",
       "n": 22582,
       "metrics": {
         "mcc": {
-          "delta": 0.0305,
+          "delta": -0.00868162210918815,
           "ci95": [
-            0.0208,
-            0.0406
+            -0.019012080722131276,
+            0.0016879430553389202
           ],
-          "p": 0.0,
-          "sig95": true
-        },
-        "auc": {
-          "delta": 0.0094,
-          "ci95": [
-            0.0062,
-            0.0127
-          ],
-          "p": 0.0,
-          "sig95": true
-        }
-      }
-    },
-    {
-      "dataset": "multispecies",
-      "a": "base-223k-d39v-tigr4",
-      "b": "hfpromoter-baseline",
-      "n": 22582,
-      "metrics": {
-        "mcc": {
-          "delta": -0.0087,
-          "ci95": [
-            -0.0192,
-            0.0013
-          ],
-          "p": 0.093,
+          "p": 0.954,
           "sig95": false
         },
         "auc": {
-          "delta": -0.0029,
+          "delta": -0.0028513153842320694,
           "ci95": [
-            -0.0063,
-            0.0007
+            -0.006238952305321527,
+            0.000455451275170727
           ],
-          "p": 0.117,
+          "p": 0.9515,
           "sig95": false
         }
       }
     },
     {
       "dataset": "ecoli-sigma70",
-      "a": "base-223k-d39v",
-      "b": "hfpromoter-baseline",
+      "a": "mini-223k-replica",
+      "b": "promoter-baseline",
       "n": 1864,
       "metrics": {
         "mcc": {
-          "delta": 0.0276,
+          "delta": -0.002038009446653283,
           "ci95": [
-            -0.0019,
-            0.0591
+            -0.03400417597250144,
+            0.03092016621053532
           ],
-          "p": 0.07,
+          "p": 0.554,
           "sig95": false
         },
         "auc": {
-          "delta": -0.0002,
+          "delta": -0.005376822586176891,
           "ci95": [
-            -0.0085,
-            0.008
+            -0.014199645099024378,
+            0.003391304355550717
           ],
-          "p": 0.916,
+          "p": 0.883,
           "sig95": false
         }
       }
     },
     {
       "dataset": "ecoli-sigma70",
-      "a": "base-223k-d39v-tigr4",
-      "b": "hfpromoter-baseline",
+      "a": "mini-223k-d39v-tigr4",
+      "b": "promoter-baseline",
       "n": 1864,
       "metrics": {
         "mcc": {
-          "delta": 0.0286,
+          "delta": 0.028740485535485496,
           "ci95": [
-            -0.0023,
-            0.0585
+            -0.0011213821627475832,
+            0.060827035358408055
           ],
-          "p": 0.075,
+          "p": 0.029,
           "sig95": false
         },
         "auc": {
-          "delta": -0.0047,
+          "delta": -0.00465019016142762,
           "ci95": [
-            -0.0136,
-            0.004
+            -0.013548161729995992,
+            0.004266258154253445
           ],
-          "p": 0.302,
-          "sig95": false
-        }
-      }
-    },
-    {
-      "dataset": "ecoli-sigma70",
-      "a": "paper223k-replica",
-      "b": "hfpromoter-baseline",
-      "n": 1864,
-      "metrics": {
-        "mcc": {
-          "delta": -0.0026,
-          "ci95": [
-            -0.0326,
-            0.0282
-          ],
-          "p": 0.885,
-          "sig95": false
-        },
-        "auc": {
-          "delta": -0.0055,
-          "ci95": [
-            -0.0141,
-            0.0033
-          ],
-          "p": 0.236,
-          "sig95": false
-        }
-      }
-    },
-    {
-      "dataset": "tigr4-high",
-      "a": "base-d39v",
-      "b": "hfpromoter-baseline",
-      "n": 1476,
-      "metrics": {
-        "mcc": {
-          "delta": 0.1417,
-          "ci95": [
-            0.1035,
-            0.1788
-          ],
-          "p": 0.0,
-          "sig95": true
-        },
-        "auc": {
-          "delta": 0.0107,
-          "ci95": [
-            -0.0038,
-            0.0249
-          ],
-          "p": 0.134,
-          "sig95": false
-        }
-      }
-    },
-    {
-      "dataset": "tigr4-high",
-      "a": "base-223k-d39v",
-      "b": "hfpromoter-baseline",
-      "n": 1476,
-      "metrics": {
-        "mcc": {
-          "delta": 0.0854,
-          "ci95": [
-            0.0552,
-            0.115
-          ],
-          "p": 0.0,
-          "sig95": true
-        },
-        "auc": {
-          "delta": 0.0067,
-          "ci95": [
-            -0.0006,
-            0.0143
-          ],
-          "p": 0.069,
+          "p": 0.8445,
           "sig95": false
         }
       }

@@ -6,6 +6,7 @@ accelerate
 biopython>=1.79
 pandas>=1.5
 scikit-learn>=1.2
+scipy>=1.10
 numpy
 huggingface-hub
 h5py

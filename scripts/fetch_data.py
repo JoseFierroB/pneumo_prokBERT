@@ -4,13 +4,14 @@
 - Ensures data/bacterial_promoters/{train,test_sigma70,test_multispecies}.parquet
   (downloads from HF unless --no-download), verifying row counts vs datasets_eval.json.
 - Validates each --data-dir (train.csv/eval.csv/test.csv with segment,y; no split overlap).
-- Checks benchmark pneumo FASTAs under --canon_root.
+- Checks reference pneumo FASTAs under --reference-root.
+- Checks vendored external inputs under datasets/external (TIGR4 sigma metadata, D39V genome).
 - Prints a readiness report; exits nonzero on any failure. Idempotent.
 
 Usage:
   pixi run python scripts/fetch_data.py
-  pixi run python scripts/fetch_data.py --data-dir datasets/d39v_full_989 --data-dir datasets/d39v_tigr4_dedup_3135
-  pixi run python scripts/fetch_data.py --no-download --canon_root /path/to/canonical_15_datasets
+  pixi run python scripts/fetch_data.py --data-dir datasets/d39v_tigr4_dedup_3135 --data-dir datasets/d39v_tigr4_high_1to2
+  pixi run python scripts/fetch_data.py --no-download --reference-root /path/to/reference
 """
 import argparse
 import json
@@ -24,12 +25,12 @@ def parse_args():
     p = argparse.ArgumentParser(description="Data readiness: HF parquet + --data-dir validation + benchmark FASTAs")
     p.add_argument("--data-dir", action="append", default=[],
                    help="Dataset dir to validate (repeatable): train.csv/eval.csv/test.csv with segment,y")
-    p.add_argument("--canon_root", type=str,
-                   default="../promoter-tools/data/benchmark/canonical_15_datasets",
-                   help="Benchmark FASTA root (default: sibling promoter-tools repo, relative to CWD=repo root)")
+    p.add_argument("--reference-root", type=str,
+                   default="datasets/reference",
+                   help="Reference FASTA root with d39v/, tigr4-high/, d39v-tigr4/ subdirs (in-repo default)")
     p.add_argument("--no-download", action="store_true",
                    help="never hit the network; fail if local parquet files are missing")
-    p.add_argument("--bact_dir", type=str, default="data/bacterial_promoters")
+    p.add_argument("--bact-dir", type=str, default="data/bacterial_promoters")
     return p.parse_args()
 
 
@@ -94,15 +95,23 @@ def main():
 
     # --- benchmark FASTAs ---
     from Bio import SeqIO
-    for col, sub, pf, nf, want in [("d39v", "1_d39v", "positives_81bp.fasta", "negatives_81bp.fasta", (989, 1000)),
-                                   ("tigr4-high", "2_tigr4_high", "positives_81bp.fasta", "negatives_81bp.fasta", (738, 738)),
-                                   ("d39v-tigr4", "4_d39v_tigr4_high", "positives_81bp.fasta", "negatives_81bp.fasta", (1727, 1738))]:
-        pp, np_ = Path(args.canon_root) / sub / pf, Path(args.canon_root) / sub / nf
+    for col, sub, pf, nf, want in [("d39v", "d39v", "positives_81bp.fasta", "negatives_81bp.fasta", (989, 1000)),
+                                   ("tigr4-high", "tigr4-high", "positives_81bp.fasta", "negatives_81bp.fasta", (738, 738)),
+                                   ("d39v-tigr4", "d39v-tigr4", "positives_81bp.fasta", "negatives_81bp.fasta", (1727, 1738))]:
+        pp, np_ = Path(args.reference_root) / sub / pf, Path(args.reference_root) / sub / nf
         if not (pp.exists() and np_.exists()):
-            check(f"benchmark {col}", False, f"(missing under {args.canon_root})")
+            check(f"benchmark {col}", False, f"(missing under {args.reference_root})")
             continue
         np_, nn = sum(1 for _ in SeqIO.parse(str(pp), "fasta")), sum(1 for _ in SeqIO.parse(str(np_), "fasta"))
         check(f"benchmark {col}", (np_, nn) == want, f"pos={np_} neg={nn}")
+
+    # --- vendored external inputs (no sibling repo needed) ---
+    meta = Path("datasets/external/positives_high_sigma_assigned_metadata.tsv")
+    check("external tigr4 metadata", meta.exists() and sum(1 for _ in open(meta)) == 739,
+          "(738 rows + header)" if meta.exists() else "(missing)")
+    genome = Path("datasets/external/D39V.fna")
+    check("external D39V genome", genome.exists() and
+          sum(1 for _ in SeqIO.parse(str(genome), "fasta")) == 1, "(1 record)" if genome.exists() else "(missing)")
 
     print("READY" if ok else "NOT READY")
     raise SystemExit(0 if ok else 1)
