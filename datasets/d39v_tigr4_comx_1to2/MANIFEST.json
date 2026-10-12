@@ -1,0 +1,47 @@
+{
+  "source": "d39v_full_989 SigX (21) + TIGR4 ComX v2 (6); negatives subsampled 1:2 (54, no replacement)",
+  "seed": 42,
+  "method": "70/15/15 stratified by y*strain; tag column kept",
+  "counts": {
+    "train": {
+      "n": 55,
+      "pos": 19
+    },
+    "eval": {
+      "n": 12,
+      "pos": 4
+    },
+    "test": {
+      "n": 13,
+      "pos": 4
+    },
+    "all": {
+      "n": 81,
+      "pos": 27
+    }
+  },
+  "overlap_audit": {
+    "1to2-train": {
+      "train": 43,
+      "eval": 9,
+      "test": 4
+    },
+    "dedup-train": {
+      "train": 43,
+      "eval": 9,
+      "test": 4
+    },
+    "comxv1-train": {
+      "train": 33,
+      "eval": 8,
+      "test": 9
+    }
+  },
+  "files_sha16": {
+    "train.csv": "e10fa2bf7db2562f",
+    "eval.csv": "dd3c20621ba0ba73",
+    "test.csv": "7df2e23dc8a4be90",
+    "all.csv": "2956d53b61d932ce"
+  },
+  "note": "1 cross-strain duplicate segment removed from train (was also in eval); splits now segment-disjoint"
+}

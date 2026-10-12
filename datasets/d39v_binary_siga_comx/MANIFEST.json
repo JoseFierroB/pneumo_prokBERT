@@ -24,6 +24,9 @@
     "train.csv": "1d728ad1b302cb15",
     "eval.csv": "17845d0db60643a6",
     "test.csv": "087037e0285b96bc",
-    "all.csv": "cd2e32f42da25534"
-  }
+    "all.csv": "cede96d43c03f844"
+  },
+  "notes": [
+    "2026-09-30: all.csv split labels rebuilt from split files (labels were stale; row set identical)"
+  ]
 }

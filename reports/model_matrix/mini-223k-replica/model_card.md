@@ -7,6 +7,11 @@
 - **Artifact:** `finetuning_outputs/mini_223k_replica_2ep/best`
 - **sha256:** `ffb2fd34f2d498a140ad23e8be2419c1118559cd0fc5b77fcade64378887b85f`
 
+## run_info.json (summary)
+- timestamp: None
+- commit: None
+- warmup_steps=500 warmup_ratio=0.0 fp16=False
+
 ## Results matrix (@0.5 / Youden)
 | Dataset | N | ACC | MCC | AUC | AP | ACC@Y | MCC@Y | Thr | Leakage |
 |---|---|---|---|---|---|---|---|---|---|

@@ -64,6 +64,8 @@ def sha_ids(ids):
 def build_columns(args, columns):
     """Build {col: (segments, labels)} once. Canonical FASTA sets come from
     scripts.reference_sets.load_reference_sets (shared with energy/ probes)."""
+    if "paper-val" in columns:
+        raise SystemExit("paper-val is selection-only (appendix): never evaluated, use val_10 from training logs")
     import pandas as pd
     data = {}
     if any(c.startswith("paper-") for c in columns):
@@ -122,11 +124,17 @@ def resolve_plan(args, models, manifest):
     if skipped:
         print(f"skip (not trained yet): {skipped}")
     aliases = [k for k in aliases if models.get(k, {}).get("status") == "exists"]
+    if not aliases:
+        raise SystemExit("no evaluable models (not in models.json with status exists; "
+                         "use scripts/eval_single.py for supplementary models)")
     eval_only = [c for c in manifest["columns"] if manifest["columns"][c].get("kind") != "selection diagnostic (appendix, not ranked)"]
     columns = args.datasets or eval_only
-    unknown = [c for c in columns if c not in manifest["columns"] or manifest["columns"][c].get("kind") == "selection diagnostic (appendix, not ranked)"]
+    unknown = [c for c in columns if c not in manifest["columns"]]
     if unknown:
         raise SystemExit(f"not evaluable columns: {unknown}")
+    appendix = [c for c in columns if manifest["columns"][c].get("kind") == "selection diagnostic (appendix, not ranked)"]
+    if appendix:
+        print(f"appendix (diagnostic, not ranked): {appendix}")
     print(f"aliases: {aliases}\ncolumns: {columns}")
     return aliases, columns
 

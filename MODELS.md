@@ -1,8 +1,17 @@
-# Model registry — 7 aliases (short names, stable technical paths)
+# Model registry — 5 aliases (short names, stable technical paths)
 
 > Weights live in `finetuning_outputs/*/` (ignored by git). This file + `models.json`
 > are the single source of truth: alias → init, data, script, artifact, hashes.
 > Local `model.safetensors` files are copies of the WS artifacts; WS hashes re-verified in Phase 1.
+
+## Naming (explicit)
+- `mini-*` = init `prokbert-mini` (general base); `promoter-*` = init `mini-promoter` (upstream 223k).
+- `223k` = HF `train_80` (178473) unless suffixed `full` (= full 223092 train, no holdout).
+- **`mix` = single fit on MIXED data** (`train_80` + pneumo-train, combined val, locked tests).
+  `mini-mix-1to2-cont` = continuation FROM the mix model (not a new mix).
+- `cont` = pneumo-only continuation of a previous model (narrows generality; see supplementaries).
+- `dedup` = `d39v_tigr4_dedup_3135`; `1to2` = `d39v_tigr4_high_1to2` (1:2 bootstrap of dedup negatives).
+- `replica` = faithful paper-protocol replica (80/10/10 seed 42 on HF data).
 
 | Alias | Init (HF id @ rev) | Training data | Script / command | Artifact (`best/`) | `model.safetensors` sha256 |
 |---|---|---|---|---|---|

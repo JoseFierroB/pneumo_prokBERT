@@ -53,6 +53,18 @@
         "y1": 1399,
         "y0": 1736
       }
+    },
+    "d39v": {
+      "kind": "selection diagnostic (appendix, not ranked)",
+      "source": "datasets/reference/d39v FASTAs (vendored)",
+      "n": 1989,
+      "note": "sigma-track diagnostic only; never ranked"
+    },
+    "tigr4-high": {
+      "kind": "selection diagnostic (appendix, not ranked)",
+      "source": "datasets/reference/tigr4-high FASTAs (vendored)",
+      "n": 1476,
+      "note": "sigma-track diagnostic only; never ranked"
     }
   },
   "leakage": {
@@ -61,35 +73,45 @@
       "paper-val": "selection_overlap",
       "ecoli-sigma70": "clean",
       "multispecies": "clean",
-      "d39v-tigr4-dedup": "clean"
+      "d39v-tigr4-dedup": "clean",
+      "d39v": "clean",
+      "tigr4-high": "clean"
     },
     "mini-d39v-tigr4": {
       "paper-test": "clean",
       "ecoli-sigma70": "clean",
       "multispecies": "clean",
       "d39v-tigr4-dedup": "train_overlap",
-      "paper-val": "clean"
+      "paper-val": "clean",
+      "d39v": "train_overlap",
+      "tigr4-high": "train_overlap"
     },
     "mini-223k-d39v-tigr4": {
       "paper-test": "clean",
       "ecoli-sigma70": "clean",
       "multispecies": "clean",
       "d39v-tigr4-dedup": "train_overlap",
-      "paper-val": "selection_overlap"
+      "paper-val": "selection_overlap",
+      "d39v": "train_overlap",
+      "tigr4-high": "train_overlap"
     },
     "promoter-d39v-tigr4": {
       "paper-test": "train_overlap",
       "ecoli-sigma70": "clean",
       "multispecies": "clean",
       "d39v-tigr4-dedup": "train_overlap",
-      "paper-val": "train_overlap"
+      "paper-val": "train_overlap",
+      "d39v": "train_overlap",
+      "tigr4-high": "train_overlap"
     },
     "promoter-baseline": {
       "paper-test": "train_overlap",
       "ecoli-sigma70": "clean",
       "multispecies": "clean",
       "d39v-tigr4-dedup": "clean",
-      "paper-val": "train_overlap"
+      "paper-val": "train_overlap",
+      "d39v": "clean",
+      "tigr4-high": "clean"
     }
   },
   "note": "'clean' = unseen during all supervised training stages (ours and upstream). 'train_overlap' = seen during ours or upstream fine-tuning (e.g. HF mini-promoter was fine-tuned on the full 223k train, which contains paper-test/paper-val)."

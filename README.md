@@ -13,6 +13,8 @@ Five variants in [MODELS.md](MODELS.md), compared on a 5×4 matrix ([EVALUATION.
 
 ## Data
 
+Canonical stack (locked): HF-223k + D39V/TIGR4 dedup + 1:2 — plain CE throughout
+(class-weights/focal explored on ComX only, retired without durable gain; flags stay as tools).
 - D39V: 989 raw positives (973 unique) + 1000 negatives.
 - Tracked (`datasets/`, ~5M):
   - `d39v_tigr4_dedup_3135` — 1399+1736=3135 (3465 naive − 330 dups; train 2194/eval 470/test 471).
@@ -105,7 +107,7 @@ Shared code lives in `scripts/` — import it, do not copy it:
 - `metrics.py`: `cell_metrics` (matrix cells), `cell_metrics_light` (probes), `trainer_compute_metrics` (Trainer callback).
 - `reference_sets.py`: canonical FASTA loader shared by the matrix and `energy/` probes.
 Left duplicated on purpose (different sources): HF split recompute vs parquet/hub reads, 2-line CSV loaders.
-Verification ladder (no test suite, by design): `py_compile` → `--help` → `--dry-run` / `fetch_data` READY → subset run vs saved `metrics.json`.
+Verification ladder (no test suite, by design): `py_compile` → `--help` → `--dry-run` / `fetch_data` READY → subset run vs saved `metrics.json` → spot-check (re-infer 1 saved cell to `/tmp` and diff scores: catches transient inference glitches).
 
 ## Evaluation
 

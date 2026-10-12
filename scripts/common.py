@@ -16,6 +16,8 @@ def resolve_device(gpu=None, cpu=False):
     """Silent auto-detect: GPU with most free memory if CUDA is available, else CPU.
 
     No flags needed in the common case. Returns (device_str, is_cuda).
+    WS GPU map (CUDA order != nvidia-smi order): CUDA 0 = 5090, 1 = 3090, 2 = 2080Ti.
+    Always use CUDA_VISIBLE_DEVICES=0 for the 5090.
     """
     if cpu or not torch.cuda.is_available():
         return "cpu", False

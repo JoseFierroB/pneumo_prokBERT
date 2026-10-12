@@ -17,7 +17,8 @@
       "seed": 42
     },
     "artifact": "finetuning_outputs/mini_223k_replica_2ep/best",
-    "sha256": "ffb2fd34f2d498a140ad23e8be2419c1118559cd0fc5b77fcade64378887b85f"
+    "sha256": "ffb2fd34f2d498a140ad23e8be2419c1118559cd0fc5b77fcade64378887b85f",
+    "run_info": "finetuning_outputs/mini_223k_replica_2ep/run_info.json"
   },
   "mini-d39v-tigr4": {
     "status": "exists",

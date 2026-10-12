@@ -44,18 +44,32 @@ from transformers import AutoModelForSequenceClassification, TrainingArguments, 
 
 
 class WeightedTrainer(Trainer):
-    """Trainer with optional class weights (None = plain CE, identical to Trainer)."""
+    """Trainer with optional class weights (None = plain CE, identical to Trainer),
+    optional focal loss (focal_gamma=None disables it) and optional per-sample
+    weights (inputs["sample_weight"], e.g. from energy profiles)."""
 
-    def __init__(self, *args, class_weight=None, **kwargs):
+    def __init__(self, *args, class_weight=None, focal_gamma=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.class_weight = torch.tensor(class_weight, dtype=torch.float) if class_weight else None
+        self.focal_gamma = focal_gamma
 
     def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
         labels = inputs.get("labels")
-        outputs = model(**inputs)
+        sw = inputs.get("sample_weight", None)
+        fwd = {k: v for k, v in inputs.items() if k != "sample_weight"}
+        outputs = model(**fwd)
         logits = outputs.get("logits")
-        w = self.class_weight.to(logits.device) if self.class_weight is not None else None
-        loss = F.cross_entropy(logits.view(-1, model.config.num_labels), labels.view(-1), weight=w)
+        if self.focal_gamma is None and self.class_weight is None and sw is None:
+            loss = F.cross_entropy(logits.view(-1, model.config.num_labels), labels.view(-1))
+        else:
+            logp = F.log_softmax(logits, dim=-1)
+            nll = -logp.gather(-1, labels.view(-1, 1)).squeeze(-1)
+            lv = labels.view(-1)
+            alpha = self.class_weight.to(logits.device).gather(0, lv) if self.class_weight is not None else torch.ones_like(nll)
+            foc = (1.0 - (-nll).exp()) ** self.focal_gamma if self.focal_gamma is not None else torch.ones_like(nll)
+            w = alpha * foc * (sw.float() if sw is not None else torch.ones_like(nll))
+            # PyTorch weighted-CE semantics: normalize by sum of weights
+            loss = (w * nll).sum() / w.sum().clamp_min(1e-12)
         return (loss, outputs) if return_outputs else loss
 
 # --- tokenizer runtime patches (upstream prokbert/ left untouched) ---
@@ -93,6 +107,10 @@ def parse_args():
     p.add_argument("--shift", type=int, default=1, help="LCA shift (default 1)")
     p.add_argument("--class-weight", type=str, default=None,
                    help="e.g. '0.5,9.5' (majority,minority) for WeightedTrainer; omit for plain CE")
+    p.add_argument("--focal-gamma", type=float, default=None,
+                   help="focal loss exponent (None = off); combines with --class-weight as alpha")
+    p.add_argument("--sample-weight-csv", type=str, default=None,
+                   help="CSV with id,weight aligned by row to train.csv (e.g. from energy profiles)")
     add_device_args(p)
     return p.parse_args()
 
@@ -157,6 +175,8 @@ def build_run_info(args, model, tokenized, files, warmup, device, use_cuda):
         "warmup_steps": warmup[0], "warmup_ratio": warmup[1],
         "adam_beta1": args.adam_beta1, "adam_beta2": args.adam_beta2, "adam_epsilon": args.adam_epsilon,
         "class_weight": args.class_weight,
+        "focal_gamma": args.focal_gamma,
+        "sample_weight_csv": args.sample_weight_csv,
         "fp16": use_cuda, "bf16": False,
         "device": device,
         "torch": torch.__version__, "transformers": __import__("transformers").__version__,
@@ -193,6 +213,7 @@ def build_training_args(args, warmup_steps, warmup_ratio, use_cuda):
         save_total_limit=2,
         disable_tqdm=False,
         dataloader_num_workers=0,
+        remove_unused_columns=False,
     )
 
 
@@ -205,6 +226,17 @@ def main():
     files = resolve_data_files(args)
     tokenizer = build_tokenizer(args)
     tokenized = tokenize_csvs(tokenizer, files)
+    if args.sample_weight_csv:
+        import pandas as pd
+        wdf = pd.read_csv(args.sample_weight_csv)
+        tdf = pd.read_csv(files[0], usecols=["id"])
+        assert list(wdf["id"].astype(str)) == list(tdf["id"].astype(str)), \
+            "sample-weight ids must match train.csv row order"
+        assert len(wdf) == len(tokenized["train"])
+        tokenized["train"] = tokenized["train"].add_column(
+            "sample_weight", wdf["weight"].astype(float).tolist())
+        print(f"sample weights: {args.sample_weight_csv} "
+              f"(n={len(wdf)}, mean={wdf['weight'].mean():.3f})")
 
     model = AutoModelForSequenceClassification.from_pretrained(args.model_name, trust_remote_code=True)
     print(f"Model loaded: {model.__class__.__name__} from {args.model_name}")
@@ -226,6 +258,7 @@ def main():
     trainer = WeightedTrainer(
         model=model,
         class_weight=cw,
+        focal_gamma=args.focal_gamma,
         args=training_args,
         train_dataset=tokenized["train"],
         eval_dataset=tokenized["eval"],

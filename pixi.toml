@@ -10,6 +10,7 @@ python = "3.10.*"
 pip = "*"
 h5py = "*"
 matplotlib = ">=3.10.9,<4"
+pandas  = "*"
 
 [pypi-dependencies]
 transformers = ">=4.30,<5"

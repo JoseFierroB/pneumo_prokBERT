@@ -9,9 +9,14 @@ Locked:   HF test_10 (22310), data test, sigma70, multispecies (eval only)
 Mirrors the legacy mix recipe (paper hyperparams, fp32, warmup 500, eval/save steps 50/500)
 but leaves a true in-dist holdout untouched. Run from the repo root.
 
+Full-train mode (--full-train): fit FULL HF train (223092) + 1to2-train + dedup-train
+segments unseen in 1to2 (no duplicates); select best by MCC on sigma70 (external,
+clean); paper-test/test_10 reported as train_overlap diagnostics. HF-promoter analog.
+
 Usage:
   pixi run python scripts/train_mix223k.py --data-dir datasets/d39v_tigr4_dedup_3135 --output-dir finetuning_outputs/mini_223k_d39v_tigr4_2ep
   pixi run python scripts/train_mix223k.py --data-dir datasets/d39v_tigr4_dedup_3135 --dry-run   # validate data/splits only
+  pixi run python scripts/train_mix223k.py --data-dir datasets/d39v_tigr4_high_1to2 --full-train --output-dir finetuning_outputs/mini_223kfull_1to2_dedup_2ep
 
 --data-dir holds train.csv/eval.csv/test.csv with segment,y (+id); the run name is its basename.
 """
@@ -67,16 +72,16 @@ def parse_args():
     p.add_argument("--weight-decay", type=float, default=0.01)
     p.add_argument("--warmup-steps", type=int, default=500)
     p.add_argument("--dry-run", action="store_true", help="build data/splits, verify hashes, exit before training")
+    p.add_argument("--full-train", action="store_true",
+                   help="fit FULL HF train + data train + dedup-unseen rows; select on sigma70 (no in-dist holdout)")
+    p.add_argument("--dedup-dir", type=str, default="datasets/d39v_tigr4_dedup_3135",
+                   help="dedup dir for unseen extra rows in --full-train mode")
     add_device_args(p)
     return p.parse_args()
 
 
 def normalize(s):
     return str(s).upper().replace("U", "T").strip()
-
-
-def sha_ids(ids):
-    return hashlib.sha256(("\n".join(ids) + "\n").encode()).hexdigest()
 
 
 def sha_ids(ids):
@@ -112,12 +117,19 @@ def load_hf_split(seed):
 
 
 def load_data_splits(args, data_name):
-    """Extra-data splits (train.csv/eval.csv/test.csv), mapped to the minimal schema."""
-    pneu_raw = load_dataset("csv", data_files={
-        "train": f"{args.data_dir}/train.csv",
-        "eval": f"{args.data_dir}/eval.csv",
-        "test": f"{args.data_dir}/test.csv",
-    })
+    """Extra-data splits (train.csv/eval.csv/test.csv), mapped to the minimal schema.
+
+    Splits load via pandas (the csv builder rejects 0-row files); an empty train
+    means 223k-only (used by --full-train ablations).
+    """
+    import pandas as pd
+    from datasets import Dataset
+    pneu_raw = {}
+    for k in ("train", "eval", "test"):
+        df0 = pd.read_csv(f"{args.data_dir}/{k}.csv")
+        assert {"segment", "y"} <= set(df0.columns), f"{args.data_dir}/{k}.csv must have segment,y columns"
+        keep = ["segment", "y"] + (["id"] if "id" in df0.columns else [])
+        pneu_raw[k] = Dataset.from_pandas(df0[keep], preserve_index=False)
     for k in ("train", "eval", "test"):
         cols = set(pneu_raw[k].column_names)
         assert {"segment", "y"} <= cols, f"{args.data_dir}/{k}.csv must have segment,y columns (has {sorted(cols)})"
@@ -140,6 +152,26 @@ def compose_parallel(args, train_80, val_10, test_10, pneu):
     val_ds = concatenate_datasets([minimal(val_10), pneu["eval"]])
     print(f"Combined: train {len(train_ds)} val {len(val_ds)} (+locked test_10 {len(test_10)}, data test {len(pneu['test'])})")
     return train_ds, val_ds
+
+
+def compose_full(args, ds, pneu):
+    """Full-train composition (HF-promoter analog): FULL HF train + data train +
+    dedup-train segments unseen in data train (no duplicates); select on sigma70."""
+    import pandas as pd
+    full = ds["train"]
+    assert len(full) == 223092, f"unexpected HF train size {len(full)}"
+    seen = {str(s).upper() for s in pneu["train"]["segment"]} if len(pneu["train"]) else set()
+    ddf = pd.read_csv(f"{args.dedup_dir}/train.csv")
+    extra = ddf[~ddf["segment"].str.upper().isin(seen)].copy()
+    print(f"dedup-unseen extra rows: {len(extra)} (excluded {len(ddf) - len(extra)} duplicates)")
+    extra_ds = extra.assign(segment_id=extra["id"].astype(str))[["segment_id", "segment", "y"]]
+    from datasets import Dataset
+    extra_min = Dataset.from_pandas(extra_ds, preserve_index=False)
+    train_ds = concatenate_datasets([minimal(full), pneu["train"], extra_min]).shuffle(seed=args.seed)
+    val_ds = minimal(ds["test_sigma70"])
+    print(f"Full: train {len(train_ds)} (full {len(full)} + data {len(pneu['train'])} + dedup-unseen {len(extra_min)}) "
+          f"val sigma70 {len(val_ds)}")
+    return train_ds, val_ds, len(extra_min), len(ddf) - len(extra_min)
 
 
 def build_manifest(args, data_name, train_80, val_10, test_10, pneu_raw, train_ds, val_ds):
@@ -203,12 +235,11 @@ def build_training_args(args, use_cuda):
     )
 
 
-def report_locked_eval(trainer, tokenizer, output_dir, val_ds, test_10, pneu_test, ds):
-    """Locked eval (report only): combined val + untouched holdouts."""
+def report_locked_eval(trainer, tokenizer, output_dir, locked_sets):
+    """Locked eval (report only) over explicit (name, split) pairs."""
     print("=== Locked eval (report only) ===")
     locked = {}
-    for name, sds in [("val_combined", val_ds), ("test_10", test_10), ("data_test", pneu_test),
-                      ("sigma70", ds["test_sigma70"]), ("multispecies", ds["test_multispecies"])]:
+    for name, sds in locked_sets:
         m = trainer.evaluate(sds.map(tokenize_fn, batched=True, batch_size=1000,
                                      remove_columns=sds.column_names,
                                      fn_kwargs={"tokenizer": tokenizer}))
@@ -230,8 +261,24 @@ def main():
 
     ds, train_80, val_10, test_10 = load_hf_split(args.seed)
     pneu_raw, pneu = load_data_splits(args, data_name)
-    train_ds, val_ds = compose_parallel(args, train_80, val_10, test_10, pneu)
-    manifest = build_manifest(args, data_name, train_80, val_10, test_10, pneu_raw, train_ds, val_ds)
+    if args.full_train:
+        train_ds, val_ds, n_extra, n_excluded = compose_full(args, ds, pneu)
+        manifest = {
+            "mode": "full-train", "hf_dataset": HF_DATASET, "hf_full_train": 223092,
+            "data_dir": args.data_dir, "data_name": data_name,
+            "data_splits": {k: {"n": len(pneu_raw[k]), "sha256": hashlib.sha256(
+                open(f"{args.data_dir}/{k}.csv", "rb").read()).hexdigest()} for k in ("train", "eval", "test")},
+            "dedup_dir": args.dedup_dir, "dedup_unseen_extra": n_extra, "dedup_excluded_dup": n_excluded,
+            "select": "sigma70 MCC (external, clean)",
+            "combined": {"train": len(train_ds), "val": len(val_ds)},
+        }
+        locked_sets = [("val_sigma70", val_ds), ("data_test", pneu["test"]),
+                       ("multispecies", ds["test_multispecies"])]
+    else:
+        train_ds, val_ds = compose_parallel(args, train_80, val_10, test_10, pneu)
+        manifest = build_manifest(args, data_name, train_80, val_10, test_10, pneu_raw, train_ds, val_ds)
+        locked_sets = [("val_combined", val_ds), ("test_10", test_10), ("data_test", pneu["test"]),
+                       ("sigma70", ds["test_sigma70"]), ("multispecies", ds["test_multispecies"])]
 
     tokenizer = build_tokenizer()
     tok_train, tok_val = tokenize_splits(tokenizer, train_ds, val_ds)
@@ -251,6 +298,7 @@ def main():
         "script": "scripts/train_mix223k.py", "model_name": BASE_MODEL,
         "model_name_or_path": getattr(model.config, "_name_or_path", BASE_MODEL),
         "model_commit_hash": getattr(model.config, "_commit_hash", None),
+        "mode": "full-train" if args.full_train else "parallel",
         "data_dir": args.data_dir, "data_name": data_name, "device": device, "seed": args.seed,
         "num_train_epochs": args.num_train_epochs,
         "per_device_train_batch_size": args.per_device_train_batch_size,
@@ -267,7 +315,7 @@ def main():
     tokenizer.save_pretrained(best)
     print(f"Saved to {best}")
 
-    report_locked_eval(trainer, tokenizer, args.output_dir, val_ds, test_10, pneu["test"], ds)
+    report_locked_eval(trainer, tokenizer, args.output_dir, locked_sets)
 
 
 if __name__ == "__main__":
