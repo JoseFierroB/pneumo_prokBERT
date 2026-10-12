@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase 2 (simple): SigA-family vs SigX (ComX) separation in existing models.
+"""Phase 2 (simple): SigA-family vs SigX (SigX) separation in existing models.
 
 Uses P(promoter) from the promoter-vs-nonpromoter classifiers as the ranking
 score with labels SigA-family=0, SigX=1. Diagnostic of impact, not a trained
@@ -75,13 +75,15 @@ def main():
         mseq = {}
         for r in SeqIO.parse("datasets/reference/tigr4-high/positives_81bp.fasta", "fasta"):
             mseq[str(r.id)] = str(r.seq).upper()
-        msig = dict(zip(meta["Sequence_ID"].astype(str), meta["Sigma_Factor"]))
+        # SOURCE label "ComX" mapped to our SigX (same competence factor).
+        msig = {k: ("SigX" if v == "ComX" else v)
+                for k, v in zip(meta["Sequence_ID"].astype(str), meta["Sigma_Factor"])}
         sa = [mseq[i] for i in msig if msig[i] in ("SigA", "SigA_Putative") and i in mseq]
-        # v2 metadata: no SigX left; TIGR4 competence = ComX
-        sx = [mseq[i] for i in msig if msig[i] in ("SigX", "ComX") and i in mseq]
+        # v2 metadata: no SigX left; TIGR4 competence = SigX
+        sx = [mseq[i] for i in msig if msig[i] == "SigX" and i in mseq]
         sets["tigr4"] = (pd.DataFrame({"segment": sa}), pd.DataFrame({"segment": sx}))
         tigr = {"n_siga": len(sa), "n_sigx": len(sx)}
-        print(f"tigr4 join: SigA-fam {len(sa)}, competence-SigX/ComX {len(sx)}")
+        print(f"tigr4 join: SigA-fam {len(sa)}, competence-SigX {len(sx)}")
     except FileNotFoundError as e:
         print(f"WARNING: TIGR4 metadata/reference missing ({e}); skipping tigr4/combined")
 
@@ -125,7 +127,7 @@ def main():
     outp = Path(args.out_dir)
     outp.mkdir(parents=True, exist_ok=True)
     json.dump(out, open(outp / "siga_vs_sigx.json", "w"), indent=2)
-    L = ["# SigA-family vs SigX (ComX) separation — diagnostic (no training)", "",
+    L = ["# SigA-family vs SigX (SigX) separation — diagnostic (no training)", "",
          "P(promoter) from promoter-vs-nonpromoter models used as ranking score, labels SigA-family=0 / SigX=1.",
          "d39v-test is honest (unseen); d39v-all is train_overlap; tigr4 clean except dedup-trained models.", "",
          "| model | set | n0 | n1 | AUC | AP | MCC@0.5 | mean_neg | mean_pos | leakage |",

@@ -351,7 +351,7 @@
     "metadata_rows": 738,
     "sigma": {
       "SigA": 278,
-      "ComX": 6
+      "SigX": 6
     },
     "minus10_available": 0,
     "dedup_tigr4_rows": 1162,
@@ -360,7 +360,7 @@
     "note": "metadata covers positives only; negatives cannot join by design",
     "sigx_pool": {
       "d39v_sigx": 21,
-      "tigr4_comx": 6,
+      "tigr4_sigx": 6,
       "combined": 27
     }
   }

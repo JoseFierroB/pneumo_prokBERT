@@ -74,5 +74,11 @@ LOWCONF: {'CiaR-LOWCONF': 3, 'None-LOWCONF': 11, 'SigA-LOWCONF': 17}
 | neg | 1000 | 0.4125 | 0.0633 |
 
 ## TIGR4 join
+- metadata rows: 738; sigma: {'SigA': 278, 'SigX': 6}
+- minus-10 available: 0/738
+- dedup TIGR4 rows: 1162; join rate pos-only: 1.0 (all: 0.3666; negatives have no metadata by design)
+- Competence pool: D39V SigX 21 + TIGR4 SigX 6 = 27
 
-- Competence pool: D39V SigX 21 + TIGR4 ComX 6 = 27
+## Proposed taxonomy (pending decision)
+- SigA (±LOWCONF) / competence SigX+SigX (27) / None / Other-TF / Neg, with LOWCONF in/out sensitivity.
+- Singletons: keep in train, drop from eval metrics.

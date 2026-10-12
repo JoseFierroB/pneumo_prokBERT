@@ -86,8 +86,9 @@ def main():
         rep["gc"][grp] = {"n": int(len(gc)), "mean": round(float(gc.mean()), 4),
                           "std": round(float(gc.std()), 4)}
 
-    # TIGR4 join
+    # TIGR4 join (SOURCE label "ComX" mapped to our SigX)
     meta = pd.read_csv(args.tigr4_meta, sep="\t")
+    meta["Sigma_Factor"] = meta["Sigma_Factor"].replace({"ComX": "SigX"})
     rep["tigr4"]["metadata_rows"] = len(meta)
     rep["tigr4"]["sigma"] = {k: int(v) for k, v in meta["Sigma_Factor"].value_counts().items()}
     # Minus_10_Seq is optional (upstream metadata dropped the column 2026-09-28)
@@ -107,10 +108,10 @@ def main():
     rep["tigr4"]["dedup_join_rate_pos"] = round(float(hit_pos.mean()), 4)
     rep["tigr4"]["note"] = "metadata covers positives only; negatives cannot join by design"
     sigx_d39v = int((tag_of(pos) == "SigX").sum())
-    # v2 metadata has no SigX left (real ortholog assignment); TIGR4 competence = ComX (6)
-    comx_tigr = int((meta["Sigma_Factor"] == "ComX").sum())
-    rep["tigr4"]["sigx_pool"] = {"d39v_sigx": sigx_d39v, "tigr4_comx": comx_tigr,
-                                 "combined": sigx_d39v + comx_tigr}
+    # v2 metadata: TIGR4 competence labeled SigX (source "ComX" mapped above)
+    sigx_tigr = int((meta["Sigma_Factor"] == "SigX").sum())
+    rep["tigr4"]["sigx_pool"] = {"d39v_sigx": sigx_d39v, "tigr4_sigx": sigx_tigr,
+                                 "combined": sigx_d39v + sigx_tigr}
 
     json.dump(rep, open(out / "descriptives.json", "w"), indent=2)
 
@@ -145,9 +146,9 @@ def main():
           f"- minus-10 available: {t['minus10_available']}/738",
           f"- dedup TIGR4 rows: {t['dedup_tigr4_rows']}; join rate pos-only: {t['dedup_join_rate_pos']} "
           f"(all: {t['dedup_join_rate_all']}; negatives have no metadata by design)",
-          f"- Competence pool: D39V SigX {t['sigx_pool']['d39v_sigx']} + TIGR4 ComX {t['sigx_pool']['tigr4_comx']} = {t['sigx_pool']['combined']}", "",
+          f"- Competence pool: D39V SigX {t['sigx_pool']['d39v_sigx']} + TIGR4 SigX {t['sigx_pool']['tigr4_sigx']} = {t['sigx_pool']['combined']}", "",
           "## Proposed taxonomy (pending decision)",
-          "- SigA (±LOWCONF) / competence SigX+ComX (27) / None / Other-TF / Neg, with LOWCONF in/out sensitivity.",
+          "- SigA (±LOWCONF) / competence SigX+SigX (27) / None / Other-TF / Neg, with LOWCONF in/out sensitivity.",
           "- Singletons: keep in train, drop from eval metrics."]
     open(out / "descriptives.md", "w").write("\n".join(L) + "\n")
     print(f"wrote {out}/descriptives.json + descriptives.md")

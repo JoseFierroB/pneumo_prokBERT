@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Build ComX v2: D39V SigX (21) + TIGR4 ComX (6) positives; SigA-family negatives
+"""Build SigX v2: D39V SigX (21) + TIGR4 SigX (6) positives; SigA-family negatives
 subsampled to 1:2 (54) — no duplicates. Splits 70/15/15 seed 42 stratified by y*strain.
 
-Output: datasets/d39v_tigr4_comx_1to2/{train,eval,test,all}.csv + MANIFEST.json
-(includes overlap audit vs 1to2-train/dedup-train/comx-v1 splits for honest flags).
+Output: datasets/d39v_tigr4_sigx_1to2/{train,eval,test,all}.csv + MANIFEST.json
+(includes overlap audit vs 1to2-train/dedup-train/sigx-v1 splits for honest flags).
 
 Usage:
-  pixi run python comx/build_dataset_v2.py
+  pixi run python sigx/build_dataset_v2.py
 """
 import hashlib
 import json
@@ -15,12 +15,12 @@ from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-DST = "datasets/d39v_tigr4_comx_1to2"
+DST = "datasets/d39v_tigr4_sigx_1to2"
 SEED = 42
 
 
 def main():
-    # positives: D39V SigX from d39v_full_989 tags + TIGR4 ComX from v2 metadata
+    # positives: D39V SigX from d39v_full_989 tags + TIGR4 SigX from v2 metadata
     d39v = pd.read_csv("datasets/d39v_full_989/all.csv")
     dtag = d39v["id"].str.split("_").str[-1]
     dpos = d39v[dtag == "SigX"].copy()
@@ -29,9 +29,10 @@ def main():
     from Bio import SeqIO
     mseq = {str(r.id): str(r.seq).upper()
             for r in SeqIO.parse("datasets/reference/tigr4-high/positives_81bp.fasta", "fasta")}
+    # SOURCE label is "ComX" (frozen vendor TSV); our label is SigX (same factor).
     tids = [str(i) for i in meta[meta["Sigma_Factor"] == "ComX"]["Sequence_ID"]]
     tpos = pd.DataFrame({"segment": [mseq[i] for i in tids], "id": tids,
-                         "sigma": "ComX", "strain": "TIGR4"})
+                         "sigma": "SigX", "strain": "TIGR4"})
     pos = pd.concat([dpos[["segment", "id", "sigma", "strain"]], tpos], ignore_index=True)
     pos["tag"] = pos["id"].str.split("_").str[-1]
     assert len(pos) == 27, f"unexpected positives {len(pos)}"
@@ -58,11 +59,11 @@ def main():
     aud = {}
     for other, fp in [("1to2-train", "datasets/d39v_tigr4_high_1to2/train.csv"),
                       ("dedup-train", "datasets/d39v_tigr4_dedup_3135/train.csv"),
-                      ("comxv1-train", "datasets/d39v_binary_siga_comx/train.csv")]:
+                      ("sigxv1-train", "datasets/d39v_binary_siga_sigx/train.csv")]:
         o = {s.upper() for s in pd.read_csv(fp)["segment"]}
         aud[other] = {s: int(sum(1 for x in (te if s == "test" else ev if s == "eval" else tr)["segment"] if x.upper() in o))
                       for s in ("train", "eval", "test")}
-    manifest = {"source": "d39v_full_989 SigX (21) + TIGR4 ComX v2 (6); negatives subsampled 1:2 (54, no replacement)",
+    manifest = {"source": "d39v_full_989 SigX (21) + TIGR4 SigX v2 (6); negatives subsampled 1:2 (54, no replacement)",
                 "seed": SEED, "method": "70/15/15 stratified by y*strain; tag column kept",
                 "counts": {s: {"n": len(d), "pos": int((d.y == 1).sum())} for s, d in
                            [("train", tr), ("eval", ev), ("test", te), ("all", df)]},

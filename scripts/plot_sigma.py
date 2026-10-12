@@ -46,11 +46,11 @@ def find_csv(dirs, alias, col):
 
 SIGA = {"SigA", "SigA-LOWCONF", "SigA_Putative"}
 
-# Only these sigma groups are plotted (SigA family merged + competence SigX/ComX).
+# Only these sigma groups are plotted (SigA family merged + competence SigX/SigX).
 # LOWCONF merges into SigA by design. Everything else (None, TFs, unassigned,
 # negatives) is not considered — except "neg", kept internally as the negative
 # class for ROC computation (never plotted).
-RELEVANT = {"SigA", "SigX", "ComX"}
+RELEVANT = {"SigA", "SigX"}
 
 
 def _merge_siga(tags):
@@ -69,7 +69,8 @@ def main():
     alldf["tag"] = alldf["id"].str.split("_").str[-1]
     seg2tag = dict(zip(alldf["segment"].str.upper(), alldf["tag"]))
     meta = pd.read_csv(args.tigr4_meta, sep="\t")
-    meta["Sigma_Factor"] = meta["Sigma_Factor"].fillna("unassigned")
+    # SOURCE label "ComX" mapped to our SigX (same competence factor).
+    meta["Sigma_Factor"] = meta["Sigma_Factor"].replace({"ComX": "SigX"}).fillna("unassigned")
     tsig = dict(zip(meta["Sequence_ID"].astype(str), meta["Sigma_Factor"]))
 
     from Bio import SeqIO
@@ -93,7 +94,7 @@ def main():
     # --- joint pool: d39v eval+test positives + tigr4-high positives, one set ---
     # Clean-only per model: rows seen by THAT model's trains are excluded (counts vary).
     # Measured: HF train contains zero pneumo rows, so train_80-based models are clean
-    # everywhere pneumo; dedup/1to2/comx trains overlap heavily (199/292 d39v rows).
+    # everywhere pneumo; dedup/1to2/sigx trains overlap heavily (199/292 d39v rows).
     _dd = {s.upper() for s in pd.read_csv("datasets/d39v_tigr4_dedup_3135/train.csv")["segment"]}
     _pp = {s.upper() for s in pd.read_csv("datasets/d39v_tigr4_1to2_plus_dedup/train.csv")["segment"]}
     SEEN = {"mini-223k-replica": set(), "promoter-baseline": set(),

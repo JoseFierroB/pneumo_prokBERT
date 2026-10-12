@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Build local binary SigA-vs-ComX set from D39V tags (no WS needed).
+"""Build local binary SigA-vs-SigX set from D39V tags (no WS needed).
 
 Positives y=1: SigX (21). Negatives y=0: SigA + SigA-LOWCONF (390).
 Splits 70/15/15 stratified, seed 42 -> train 287 (272/15) / eval 62 (59/3) / test 62 (59/3).
-Mirrors the legacy WS 411 recipe; TIGR4's 6 ComX reserved for later (not included).
+Mirrors the legacy WS 411 recipe; TIGR4's 6 SigX reserved for later (not included).
 
-Output: datasets/d39v_binary_siga_comx/{train,eval,test,all}.csv + MANIFEST.json
+Output: datasets/d39v_binary_siga_sigx/{train,eval,test,all}.csv + MANIFEST.json
 
 Usage:
-  pixi run python scripts/build_comx_binary.py
+  pixi run python scripts/build_sigx_binary.py
 """
 import hashlib
 import json
@@ -17,7 +17,7 @@ from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-DST = "datasets/d39v_binary_siga_comx"
+DST = "datasets/d39v_binary_siga_sigx"
 SIGA = {"SigA", "SigA-LOWCONF"}
 
 

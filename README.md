@@ -14,13 +14,13 @@ Five variants in [MODELS.md](MODELS.md), compared on a 5×4 matrix ([EVALUATION.
 ## Data
 
 Canonical stack (locked): HF-223k + D39V/TIGR4 dedup + 1:2 — plain CE throughout
-(class-weights/focal explored on ComX only, retired without durable gain; flags stay as tools).
+(class-weights/focal explored on SigX only, retired without durable gain; flags stay as tools).
 - D39V: 989 raw positives (973 unique) + 1000 negatives.
 - Tracked (`datasets/`, ~5M):
   - `d39v_tigr4_dedup_3135` — 1399+1736=3135 (3465 naive − 330 dups; train 2194/eval 470/test 471).
   - `d39v_tigr4_high_1to2` — 1399+2798=4197, 1:2 pos:neg via within-split bootstrap (train 2937/eval 630/test 630).
-  - `d39v_binary_siga_comx/` — SigA-vs-ComX binary (287/62/62) + MANIFEST.
-  - `d39v_full_989` — 973+1000=1973. Tag source appendix (`sigma,strain,split` columns for ComX/sigma builders); not used for training.
+  - `d39v_binary_siga_sigx/` — SigA-vs-SigX binary (287/62/62) + MANIFEST.
+  - `d39v_full_989` — 973+1000=1973. Tag source appendix (`sigma,strain,split` columns for SigX/sigma builders); not used for training.
   - `external/` — vendored TIGR4 sigma metadata (738 rows) + D39V genome; no sibling repo needed.
 - Format: CSVs with `segment,y` (+`id`; +`sigma,strain,split` in `d39v_full_989`).
 - Benchmark FASTAs, vendored (`datasets/reference/`, ~0.8M): `d39v` (989+1000), `tigr4-high` (738+738), `d39v-tigr4` (1727+1738), 81 bp. Self-contained: no sibling repo needed.

@@ -42,16 +42,16 @@ Legacy runs without `run_info.json` are marked; their internal numbers come from
 4. Warmup-capped run underfits (low train *and* test) — distinct signature from overfit.
 
 ## Overfitting verdict (measured, all trained models)
-Evidence: 34 train-vs-test ROC overlays (`roc_gap__*.png`: 6 matrix + 28 ComX),
+Evidence: 34 train-vs-test ROC overlays (`roc_gap__*.png`: 6 matrix + 28 SigX),
 train/test loss + MCC curves (63 + 72 PNGs), post-hoc train AUCs, leakage flags.
 - **Matrix, clean tests**: gaps AUC +0.03–0.05, MCC +0.06–0.12 (replica, mix, A1).
   Small, healthy, same direction — fitting, not memorizing.
 - **Overlap cells**: gaps ≈ 0 (dedup-all, full-train paper-test). Expected: the model
   saw those rows. Flagged, never ranked as clean — memorization declared, not hidden.
 - **Full-train**: train AUC 0.936 ≤ val 0.945 — zero overfit by the book.
-- **ComX fresh runs** (S1/S2/S3/v2): gaps ~0 or negative (test easier than train at n=62).
+- **SigX fresh runs** (S1/S2/S3/v2): gaps ~0 or negative (test easier than train at n=62).
   No overfit signal beyond small-n noise.
-- **ComX committed inits** (P/A1/full): gaps +0.4–0.7 AUC — train memorized, test fails.
+- **SigX committed inits** (P/A1/full): gaps +0.4–0.7 AUC — train memorized, test fails.
   Documented as failure mode (features too committed for 15 positives), not as results.
 - **Curves**: train loss ↓ with eval loss ↓/flat and eval MCC plateaus in every kept run;
   no divergence anywhere. The one underfit (warmup-capped) shows low train *and* test.

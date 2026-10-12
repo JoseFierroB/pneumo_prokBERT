@@ -1,4 +1,4 @@
-# SigA-family vs SigX (ComX) separation — diagnostic (no training)
+# SigA-family vs SigX (SigX) separation — diagnostic (no training)
 
 P(promoter) from promoter-vs-nonpromoter models used as ranking score, labels SigA-family=0 / SigX=1.
 d39v-test is honest (unseen); d39v-all is train_overlap; tigr4 clean except dedup-trained models.
