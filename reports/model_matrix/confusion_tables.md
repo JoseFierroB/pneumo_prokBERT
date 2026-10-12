@@ -122,6 +122,66 @@ Rows = actual (0 neg, 1 pos), columns = predicted. From `metrics.json`.
 | 0 | 1574 | 162 |
 | 1 | 124 | 1275 |
 
+## mini-223k-d39v-tigr4-high5050-3ep
+
+### paper-test (n=22310, ACC 0.8212, MCC +0.6431)
+
+| actual \ pred | 0 | 1 |
+|---|---|---|
+| 0 | 9308 | 1776 |
+| 1 | 2212 | 9014 |
+
+### ecoli-sigma70 (n=1864, ACC 0.8745, MCC +0.7489)
+
+| actual \ pred | 0 | 1 |
+|---|---|---|
+| 0 | 865 | 135 |
+| 1 | 99 | 765 |
+
+### multispecies (n=22582, ACC 0.8209, MCC +0.6424)
+
+| actual \ pred | 0 | 1 |
+|---|---|---|
+| 0 | 9525 | 1763 |
+| 1 | 2282 | 9012 |
+
+### d39v-tigr4-dedup (n=3135, ACC 0.9311, MCC +0.8605)
+
+| actual \ pred | 0 | 1 |
+|---|---|---|
+| 0 | 1636 | 100 |
+| 1 | 116 | 1283 |
+
+## mini-223k-d39v-tigr4-high5050-4ep
+
+### paper-test (n=22310, ACC 0.7965, MCC +0.5967)
+
+| actual \ pred | 0 | 1 |
+|---|---|---|
+| 0 | 9408 | 1676 |
+| 1 | 2863 | 8363 |
+
+### ecoli-sigma70 (n=1864, ACC 0.8541, MCC +0.7078)
+
+| actual \ pred | 0 | 1 |
+|---|---|---|
+| 0 | 847 | 153 |
+| 1 | 119 | 745 |
+
+### multispecies (n=22582, ACC 0.7945, MCC +0.5924)
+
+| actual \ pred | 0 | 1 |
+|---|---|---|
+| 0 | 9576 | 1712 |
+| 1 | 2929 | 8365 |
+
+### d39v-tigr4-dedup (n=3135, ACC 0.8941, MCC +0.7875)
+
+| actual \ pred | 0 | 1 |
+|---|---|---|
+| 0 | 1536 | 200 |
+| 1 | 132 | 1267 |
+
 ## promoter-d39v-tigr4
 
 ### paper-test (n=22310, ACC 0.8889, MCC +0.7928)

@@ -1,4 +1,4 @@
-# Evaluation Report — 6 Models × 4 Datasets (5090, k6s1, @0.5 / Youden)
+# Evaluation Report — 8 Models × 4 Datasets (5090, k6s1, @0.5 / Youden)
 
 Matrix from `reports/model_matrix/metrics.json` (evaluator `scripts/eval_matrix.py`, one tokenizer call per dataset).
 Leakage flags: `clean` = clean of fine-tuning labels in this project; `train_overlap` / `selection_overlap` otherwise.
@@ -22,6 +22,14 @@ Leakage flags: `clean` = clean of fine-tuning labels in this project; `train_ove
 | mini-223k-d39v-tigr4-high5050 | ecoli-sigma70 | 1864 | 0.8766 | 0.7517 | 0.9392 | 0.9387 | 0.8782 | 0.7549 | 0.506 | clean |
 | mini-223k-d39v-tigr4-high5050 | multispecies | 22582 | 0.8068 | 0.6138 | 0.8905 | 0.9040 | 0.8084 | 0.6174 | 0.521 | clean |
 | mini-223k-d39v-tigr4-high5050 | d39v-tigr4-dedup | 3135 | 0.9088 | 0.8161 | 0.9584 | 0.9672 | 0.9372 | 0.8746 | 0.833 | train_overlap |
+| mini-223k-d39v-tigr4-high5050-3ep | paper-test | 22310 | 0.8212 | 0.6431 | 0.9043 | 0.9169 | 0.8234 | 0.6492 | 0.563 | clean |
+| mini-223k-d39v-tigr4-high5050-3ep | ecoli-sigma70 | 1864 | 0.8745 | 0.7489 | 0.9458 | 0.9457 | 0.8830 | 0.7651 | 0.716 | clean |
+| mini-223k-d39v-tigr4-high5050-3ep | multispecies | 22582 | 0.8209 | 0.6424 | 0.9018 | 0.9135 | 0.8233 | 0.6482 | 0.540 | clean |
+| mini-223k-d39v-tigr4-high5050-3ep | d39v-tigr4-dedup | 3135 | 0.9311 | 0.8605 | 0.9684 | 0.9742 | 0.9445 | 0.8898 | 0.889 | train_overlap |
+| mini-223k-d39v-tigr4-high5050-4ep | paper-test | 22310 | 0.7965 | 0.5967 | 0.8807 | 0.8952 | 0.7968 | 0.5987 | 0.519 | clean |
+| mini-223k-d39v-tigr4-high5050-4ep | ecoli-sigma70 | 1864 | 0.8541 | 0.7078 | 0.9283 | 0.9268 | 0.8632 | 0.7248 | 0.589 | clean |
+| mini-223k-d39v-tigr4-high5050-4ep | multispecies | 22582 | 0.7945 | 0.5924 | 0.8778 | 0.8926 | 0.7952 | 0.5932 | 0.489 | clean |
+| mini-223k-d39v-tigr4-high5050-4ep | d39v-tigr4-dedup | 3135 | 0.8941 | 0.7875 | 0.9521 | 0.9629 | 0.9321 | 0.8638 | 0.865 | train_overlap |
 | promoter-d39v-tigr4 | paper-test | 22310 | 0.8889 | 0.7928 | 0.9769 | 0.9798 | 0.9238 | 0.8476 | 0.206 | train_overlap |
 | promoter-d39v-tigr4 | ecoli-sigma70 | 1864 | 0.8589 | 0.7217 | 0.9357 | 0.9335 | 0.8632 | 0.7253 | 0.170 | clean |
 | promoter-d39v-tigr4 | multispecies | 22582 | 0.7910 | 0.6022 | 0.8807 | 0.8905 | 0.8012 | 0.6054 | 0.267 | clean |
@@ -40,6 +48,16 @@ Leakage flags: `clean` = clean of fine-tuning labels in this project; `train_ove
 | ecoli-sigma70 | mini-223k-replica − promoter-baseline | auc | -0.0054 | [-0.0142, +0.0034] | 0.8830 | no |
 | ecoli-sigma70 | mini-223k-d39v-tigr4 − promoter-baseline | mcc | +0.0287 | [-0.0011, +0.0608] | 0.0290 | no |
 | ecoli-sigma70 | mini-223k-d39v-tigr4 − promoter-baseline | auc | -0.0047 | [-0.0135, +0.0043] | 0.8445 | no |
+| paper-test | mini-223k-d39v-tigr4-high5050 − mini-223k-d39v-tigr4 | mcc | +0.0224 | [+0.0133, +0.0314] | 0.0000 | yes |
+| paper-test | mini-223k-d39v-tigr4-high5050 − mini-223k-d39v-tigr4 | auc | +0.0106 | [+0.0081, +0.0131] | 0.0000 | yes |
+| multispecies | mini-223k-d39v-tigr4-high5050 − mini-223k-d39v-tigr4 | mcc | +0.0316 | [+0.0227, +0.0401] | 0.0000 | yes |
+| multispecies | mini-223k-d39v-tigr4-high5050 − mini-223k-d39v-tigr4 | auc | +0.0123 | [+0.0098, +0.0148] | 0.0000 | yes |
+| ecoli-sigma70 | mini-223k-d39v-tigr4-high5050 − mini-223k-d39v-tigr4 | mcc | +0.0152 | [-0.0100, +0.0399] | 0.1160 | no |
+| ecoli-sigma70 | mini-223k-d39v-tigr4-high5050 − mini-223k-d39v-tigr4 | auc | +0.0066 | [+0.0001, +0.0126] | 0.0225 | yes |
+| paper-test | mini-223k-d39v-tigr4-high5050-3ep − mini-223k-d39v-tigr4-high5050 | mcc | +0.0284 | [+0.0203, +0.0365] | 0.0000 | yes |
+| paper-test | mini-223k-d39v-tigr4-high5050-3ep − mini-223k-d39v-tigr4-high5050 | auc | +0.0124 | [+0.0102, +0.0145] | 0.0000 | yes |
+| multispecies | mini-223k-d39v-tigr4-high5050-3ep − mini-223k-d39v-tigr4-high5050 | mcc | +0.0286 | [+0.0204, +0.0367] | 0.0000 | yes |
+| multispecies | mini-223k-d39v-tigr4-high5050-3ep − mini-223k-d39v-tigr4-high5050 | auc | +0.0113 | [+0.0091, +0.0135] | 0.0000 | yes |
 
 ## Notes
 - HF baseline is zero-shot `neuralbioinfo/prokbert-mini-promoter` (no fine-tuning here); it was upstream-fine-tuned on the full 223k train, so its `paper-test`/`paper-val` cells are `train_overlap`, not clean.
@@ -55,5 +73,7 @@ Leakage flags: `clean` = clean of fine-tuning labels in this project; `train_ove
 - `mini-d39v-tigr4`: `finetuning_outputs/mini_d39v_tigr4_2ep/best`
 - `mini-223k-d39v-tigr4`: `finetuning_outputs/mini_223k_d39v_tigr4_2ep/best`
 - `mini-223k-d39v-tigr4-high5050`: `finetuning_outputs/mini_223k_d39v_tigr4_high5050_2ep/best`
+- `mini-223k-d39v-tigr4-high5050-3ep`: `finetuning_outputs/mini_223k_d39v_tigr4_high5050_3ep/best`
+- `mini-223k-d39v-tigr4-high5050-4ep`: `finetuning_outputs/mini_223k_d39v_tigr4_high5050_4ep/best`
 - `promoter-d39v-tigr4`: `finetuning_outputs/promoter_d39v_tigr4_2ep/best`
 - `promoter-baseline`: `neuralbioinfo/prokbert-mini-promoter` (pinned rev `8502f02`)

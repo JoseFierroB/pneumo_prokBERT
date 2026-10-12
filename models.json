@@ -83,6 +83,50 @@
     "sha256": "3afcd3cdc90e6cb909eb23d84a42057caa4858f02320f22a93724625a6607292",
     "run_info": "finetuning_outputs/mini_223k_d39v_tigr4_high5050_2ep/run_info.json"
   },
+  "mini-223k-d39v-tigr4-high5050-3ep": {
+    "status": "exists",
+    "note": "epoch ablation (E6); same protocol/data as high5050 2ep, 3 epochs",
+    "init": {
+      "hf_id": "neuralbioinfo/prokbert-mini",
+      "rev": "feb2520a43cd9cdb5b3d8477e47209dbcb55d1dc"
+    },
+    "train_data": "hf_train_80 (178473) + high5050 train (2937); select on combined val; tests locked",
+    "script": "scripts/train_mix223k.py --data-dir datasets/d39v_tigr4_high5050 --output_dir finetuning_outputs/mini_223k_d39v_tigr4_high5050_3ep --num-train-epochs 3",
+    "hyperparams": {
+      "epochs": 3,
+      "bs": 128,
+      "lr": 0.0004,
+      "wd": 0.01,
+      "warmup_steps": 500,
+      "fp16": false,
+      "seed": 42
+    },
+    "artifact": "finetuning_outputs/mini_223k_d39v_tigr4_high5050_3ep/best",
+    "sha256": "a0a257c4e067ee9698770d730d367da33d2015a76674e0e2c41a3b6c23e28d59",
+    "run_info": "finetuning_outputs/mini_223k_d39v_tigr4_high5050_3ep/run_info.json"
+  },
+  "mini-223k-d39v-tigr4-high5050-4ep": {
+    "status": "exists",
+    "note": "epoch ablation (E6); same protocol/data as high5050 2ep, 4 epochs",
+    "init": {
+      "hf_id": "neuralbioinfo/prokbert-mini",
+      "rev": "feb2520a43cd9cdb5b3d8477e47209dbcb55d1dc"
+    },
+    "train_data": "hf_train_80 (178473) + high5050 train (2937); select on combined val; tests locked",
+    "script": "scripts/train_mix223k.py --data-dir datasets/d39v_tigr4_high5050 --output_dir finetuning_outputs/mini_223k_d39v_tigr4_high5050_4ep --num-train-epochs 4",
+    "hyperparams": {
+      "epochs": 4,
+      "bs": 128,
+      "lr": 0.0004,
+      "wd": 0.01,
+      "warmup_steps": 500,
+      "fp16": false,
+      "seed": 42
+    },
+    "artifact": "finetuning_outputs/mini_223k_d39v_tigr4_high5050_4ep/best",
+    "sha256": "ed26c9f8649f3c7d3d1a993d29f5191ddc852a5c0af92fe62143692469c7cda8",
+    "run_info": "finetuning_outputs/mini_223k_d39v_tigr4_high5050_4ep/run_info.json"
+  },
   "promoter-d39v-tigr4": {
     "status": "exists",
     "init": {

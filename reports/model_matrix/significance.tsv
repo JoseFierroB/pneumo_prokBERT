@@ -5,3 +5,13 @@ ecoli-sigma70	mini-223k-replica	promoter-baseline	mcc	-0.0020	-0.0340	+0.0309	0.
 ecoli-sigma70	mini-223k-replica	promoter-baseline	auc	-0.0054	-0.0142	+0.0034	0.8830	no
 ecoli-sigma70	mini-223k-d39v-tigr4	promoter-baseline	mcc	+0.0287	-0.0011	+0.0608	0.0290	no
 ecoli-sigma70	mini-223k-d39v-tigr4	promoter-baseline	auc	-0.0047	-0.0135	+0.0043	0.8445	no
+paper-test	mini-223k-d39v-tigr4-high5050	mini-223k-d39v-tigr4	mcc	+0.0224	+0.0133	+0.0314	0.0000	yes
+paper-test	mini-223k-d39v-tigr4-high5050	mini-223k-d39v-tigr4	auc	+0.0106	+0.0081	+0.0131	0.0000	yes
+multispecies	mini-223k-d39v-tigr4-high5050	mini-223k-d39v-tigr4	mcc	+0.0316	+0.0227	+0.0401	0.0000	yes
+multispecies	mini-223k-d39v-tigr4-high5050	mini-223k-d39v-tigr4	auc	+0.0123	+0.0098	+0.0148	0.0000	yes
+ecoli-sigma70	mini-223k-d39v-tigr4-high5050	mini-223k-d39v-tigr4	mcc	+0.0152	-0.0100	+0.0399	0.1160	no
+ecoli-sigma70	mini-223k-d39v-tigr4-high5050	mini-223k-d39v-tigr4	auc	+0.0066	+0.0001	+0.0126	0.0225	yes
+paper-test	mini-223k-d39v-tigr4-high5050-3ep	mini-223k-d39v-tigr4-high5050	mcc	+0.0284	+0.0203	+0.0365	0.0000	yes
+paper-test	mini-223k-d39v-tigr4-high5050-3ep	mini-223k-d39v-tigr4-high5050	auc	+0.0124	+0.0102	+0.0145	0.0000	yes
+multispecies	mini-223k-d39v-tigr4-high5050-3ep	mini-223k-d39v-tigr4-high5050	mcc	+0.0286	+0.0204	+0.0367	0.0000	yes
+multispecies	mini-223k-d39v-tigr4-high5050-3ep	mini-223k-d39v-tigr4-high5050	auc	+0.0113	+0.0091	+0.0135	0.0000	yes

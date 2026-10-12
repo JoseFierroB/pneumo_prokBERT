@@ -66,6 +66,8 @@ def parse_args():
                    help="Folder with train.csv/eval.csv/test.csv (segment,y +id); run name is its basename")
     p.add_argument("--output-dir", type=str, default=None)
     p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--train-seed", type=int, default=None,
+                   help="training randomness (shuffle/init/order); default = --seed. Splits always use --seed.")
     p.add_argument("--num-train-epochs", type=int, default=2)
     p.add_argument("--per-device-train-batch-size", type=int, default=128)
     p.add_argument("--learning-rate", type=float, default=0.0004)
@@ -146,9 +148,14 @@ def load_data_splits(args, data_name):
     return pneu_raw, pneu
 
 
+def train_seed(args):
+    """Training randomness; splits always use --seed (locked)."""
+    return args.train_seed if args.train_seed is not None else args.seed
+
+
 def compose_parallel(args, train_80, val_10, test_10, pneu):
     """Parallel composition: HF train_80 + pneumo train (fit); HF val_10 + pneumo eval (select)."""
-    train_ds = concatenate_datasets([minimal(train_80), pneu["train"]]).shuffle(seed=args.seed)
+    train_ds = concatenate_datasets([minimal(train_80), pneu["train"]]).shuffle(seed=train_seed(args))
     val_ds = concatenate_datasets([minimal(val_10), pneu["eval"]])
     print(f"Combined: train {len(train_ds)} val {len(val_ds)} (+locked test_10 {len(test_10)}, data test {len(pneu['test'])})")
     return train_ds, val_ds
@@ -167,7 +174,7 @@ def compose_full(args, ds, pneu):
     extra_ds = extra.assign(segment_id=extra["id"].astype(str))[["segment_id", "segment", "y"]]
     from datasets import Dataset
     extra_min = Dataset.from_pandas(extra_ds, preserve_index=False)
-    train_ds = concatenate_datasets([minimal(full), pneu["train"], extra_min]).shuffle(seed=args.seed)
+    train_ds = concatenate_datasets([minimal(full), pneu["train"], extra_min]).shuffle(seed=train_seed(args))
     val_ds = minimal(ds["test_sigma70"])
     print(f"Full: train {len(train_ds)} (full {len(full)} + data {len(pneu['train'])} + dedup-unseen {len(extra_min)}) "
           f"val sigma70 {len(val_ds)}")
@@ -229,7 +236,7 @@ def build_training_args(args, use_cuda):
         eval_strategy="steps", eval_steps=50,
         save_strategy="steps", save_total_limit=2,
         load_best_model_at_end=True, metric_for_best_model="mcc", greater_is_better=True,
-        report_to="none", seed=args.seed,
+        report_to="none", seed=train_seed(args),
         bf16=False, fp16=False,
         dataloader_num_workers=0, optim="adamw_torch",
     )
@@ -252,7 +259,7 @@ def report_locked_eval(trainer, tokenizer, output_dir, locked_sets):
 
 def main():
     args = parse_args()
-    set_seed(args.seed)
+    set_seed(train_seed(args))
     data_name = Path(args.data_dir).name
     if args.output_dir is None:
         args.output_dir = f"finetuning_outputs/mini_223k_{data_name}_2ep"
@@ -300,6 +307,7 @@ def main():
         "model_commit_hash": getattr(model.config, "_commit_hash", None),
         "mode": "full-train" if args.full_train else "parallel",
         "data_dir": args.data_dir, "data_name": data_name, "device": device, "seed": args.seed,
+        "train_seed": train_seed(args),
         "num_train_epochs": args.num_train_epochs,
         "per_device_train_batch_size": args.per_device_train_batch_size,
         "learning_rate": args.learning_rate, "weight_decay": args.weight_decay,

@@ -104,6 +104,24 @@
       "d39v": "train_overlap",
       "tigr4-high": "train_overlap"
     },
+    "mini-223k-d39v-tigr4-high5050-3ep": {
+      "paper-test": "clean",
+      "ecoli-sigma70": "clean",
+      "multispecies": "clean",
+      "d39v-tigr4-dedup": "train_overlap",
+      "paper-val": "selection_overlap",
+      "d39v": "train_overlap",
+      "tigr4-high": "train_overlap"
+    },
+    "mini-223k-d39v-tigr4-high5050-4ep": {
+      "paper-test": "clean",
+      "ecoli-sigma70": "clean",
+      "multispecies": "clean",
+      "d39v-tigr4-dedup": "train_overlap",
+      "paper-val": "selection_overlap",
+      "d39v": "train_overlap",
+      "tigr4-high": "train_overlap"
+    },
     "promoter-d39v-tigr4": {
       "paper-test": "train_overlap",
       "ecoli-sigma70": "clean",
