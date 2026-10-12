@@ -62,6 +62,27 @@
     "sha256": "cc3575b3858862ed3cdf6645d4a838c374d8fc7aff20a2c795de8f2dddeaa30a",
     "run_info": "finetuning_outputs/mini_223k_d39v_tigr4_2ep/run_info.json"
   },
+  "mini-223k-d39v-tigr4-high5050": {
+    "status": "exists",
+    "init": {
+      "hf_id": "neuralbioinfo/prokbert-mini",
+      "rev": "feb2520a43cd9cdb5b3d8477e47209dbcb55d1dc"
+    },
+    "train_data": "hf_train_80 (178473) + high5050 train (2937); select on combined val; tests locked",
+    "script": "scripts/train_mix223k.py --data-dir datasets/d39v_tigr4_high5050 --output_dir finetuning_outputs/mini_223k_d39v_tigr4_high5050_2ep",
+    "hyperparams": {
+      "epochs": 2,
+      "bs": 128,
+      "lr": 0.0004,
+      "wd": 0.01,
+      "warmup_steps": 500,
+      "fp16": false,
+      "seed": 42
+    },
+    "artifact": "finetuning_outputs/mini_223k_d39v_tigr4_high5050_2ep/best",
+    "sha256": "3afcd3cdc90e6cb909eb23d84a42057caa4858f02320f22a93724625a6607292",
+    "run_info": "finetuning_outputs/mini_223k_d39v_tigr4_high5050_2ep/run_info.json"
+  },
   "promoter-d39v-tigr4": {
     "status": "exists",
     "init": {

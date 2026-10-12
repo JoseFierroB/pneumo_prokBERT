@@ -26,6 +26,9 @@ PAIRS = [
     ("multispecies", "mini-223k-d39v-tigr4", B),
     ("ecoli-sigma70", "mini-223k-replica", B),
     ("ecoli-sigma70", "mini-223k-d39v-tigr4", B),
+    ("paper-test", "mini-223k-d39v-tigr4-high5050", "mini-223k-d39v-tigr4"),
+    ("multispecies", "mini-223k-d39v-tigr4-high5050", "mini-223k-d39v-tigr4"),
+    ("ecoli-sigma70", "mini-223k-d39v-tigr4-high5050", "mini-223k-d39v-tigr4"),
 ]
 
 

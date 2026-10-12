@@ -1,4 +1,4 @@
-# Evaluation Report — 5 Models × 4 Datasets (5090, k6s1, @0.5 / Youden)
+# Evaluation Report — 6 Models × 4 Datasets (5090, k6s1, @0.5 / Youden)
 
 Matrix from `reports/model_matrix/metrics.json` (evaluator `scripts/eval_matrix.py`, one tokenizer call per dataset).
 Leakage flags: `clean` = clean of fine-tuning labels in this project; `train_overlap` / `selection_overlap` otherwise.
@@ -18,6 +18,10 @@ Leakage flags: `clean` = clean of fine-tuning labels in this project; `train_ove
 | mini-223k-d39v-tigr4 | ecoli-sigma70 | 1864 | 0.8686 | 0.7364 | 0.9326 | 0.9282 | 0.8702 | 0.7393 | 0.524 | clean |
 | mini-223k-d39v-tigr4 | multispecies | 22582 | 0.7909 | 0.5820 | 0.8782 | 0.8930 | 0.7954 | 0.5935 | 0.570 | clean |
 | mini-223k-d39v-tigr4 | d39v-tigr4-dedup | 3135 | 0.8957 | 0.7924 | 0.9580 | 0.9661 | 0.9330 | 0.8679 | 0.956 | train_overlap |
+| mini-223k-d39v-tigr4-high5050 | paper-test | 22310 | 0.8072 | 0.6146 | 0.8919 | 0.9059 | 0.8087 | 0.6199 | 0.564 | clean |
+| mini-223k-d39v-tigr4-high5050 | ecoli-sigma70 | 1864 | 0.8766 | 0.7517 | 0.9392 | 0.9387 | 0.8782 | 0.7549 | 0.506 | clean |
+| mini-223k-d39v-tigr4-high5050 | multispecies | 22582 | 0.8068 | 0.6138 | 0.8905 | 0.9040 | 0.8084 | 0.6174 | 0.521 | clean |
+| mini-223k-d39v-tigr4-high5050 | d39v-tigr4-dedup | 3135 | 0.9088 | 0.8161 | 0.9584 | 0.9672 | 0.9372 | 0.8746 | 0.833 | train_overlap |
 | promoter-d39v-tigr4 | paper-test | 22310 | 0.8889 | 0.7928 | 0.9769 | 0.9798 | 0.9238 | 0.8476 | 0.206 | train_overlap |
 | promoter-d39v-tigr4 | ecoli-sigma70 | 1864 | 0.8589 | 0.7217 | 0.9357 | 0.9335 | 0.8632 | 0.7253 | 0.170 | clean |
 | promoter-d39v-tigr4 | multispecies | 22582 | 0.7910 | 0.6022 | 0.8807 | 0.8905 | 0.8012 | 0.6054 | 0.267 | clean |
@@ -50,5 +54,6 @@ Leakage flags: `clean` = clean of fine-tuning labels in this project; `train_ove
 - `mini-223k-replica`: `finetuning_outputs/mini_223k_replica_2ep/best`
 - `mini-d39v-tigr4`: `finetuning_outputs/mini_d39v_tigr4_2ep/best`
 - `mini-223k-d39v-tigr4`: `finetuning_outputs/mini_223k_d39v_tigr4_2ep/best`
+- `mini-223k-d39v-tigr4-high5050`: `finetuning_outputs/mini_223k_d39v_tigr4_high5050_2ep/best`
 - `promoter-d39v-tigr4`: `finetuning_outputs/promoter_d39v_tigr4_2ep/best`
 - `promoter-baseline`: `neuralbioinfo/prokbert-mini-promoter` (pinned rev `8502f02`)

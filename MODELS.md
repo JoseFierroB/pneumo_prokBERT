@@ -1,4 +1,4 @@
-# Model registry — 5 aliases (short names, stable technical paths)
+# Model registry — 6 aliases (short names, stable technical paths)
 
 > Weights live in `finetuning_outputs/*/` (ignored by git). This file + `models.json`
 > are the single source of truth: alias → init, data, script, artifact, hashes.
@@ -11,6 +11,8 @@
   `mini-mix-1to2-cont` = continuation FROM the mix model (not a new mix).
 - `cont` = pneumo-only continuation of a previous model (narrows generality; see supplementaries).
 - `dedup` = `d39v_tigr4_dedup_3135`; `1to2` = `d39v_tigr4_high_1to2` (1:2 bootstrap of dedup negatives).
+- `high5050` = `d39v_tigr4_high5050` (1399 pos + 2798 neg 1:2, negatives 50% CDS + 50% IGR).
+- **Primary mix model: `mini-223k-d39v-tigr4-high5050`** (promoted: head-to-head SIG on clean slices + general, see `reports/supplementary_5050/`).
 - `replica` = faithful paper-protocol replica (80/10/10 seed 42 on HF data).
 
 | Alias | Init (HF id @ rev) | Training data | Script / command | Artifact (`best/`) | `model.safetensors` sha256 |
@@ -18,6 +20,7 @@
 | `mini-223k-replica` | `neuralbioinfo/prokbert-mini` @ `feb2520a` | HF train 80/10/10 seed 42 (178473/22309/22310) | legacy `/tmp/paper_faithful_2ep.py` (mirrored by `paper_replica.py`) | `finetuning_outputs/mini_223k_replica_2ep/best` | `ffb2fd34…` |
 | `mini-d39v-tigr4` | `neuralbioinfo/prokbert-mini` @ `feb2520a` | `datasets/d39v_tigr4_dedup_3135` (2194/470/471) | `finetuning.py --model-name neuralbioinfo/prokbert-mini --dataset-dir datasets/d39v_tigr4_dedup_3135 --output-dir finetuning_outputs/mini_d39v_tigr4_2ep --warmup-ratio 0.1` | `finetuning_outputs/mini_d39v_tigr4_2ep/best` | `1f9050d6…` |
 | `mini-223k-d39v-tigr4` | `neuralbioinfo/prokbert-mini` @ `feb2520a` | HF `train_80` (178473) + dedup train (2194); select on combined val; tests locked | `scripts/train_mix223k.py --data-dir datasets/d39v_tigr4_dedup_3135 --output-dir finetuning_outputs/mini_223k_d39v_tigr4_2ep` | `finetuning_outputs/mini_223k_d39v_tigr4_2ep/best` | `cc3575b3…` |
+| `mini-223k-d39v-tigr4-high5050` ★ | `neuralbioinfo/prokbert-mini` @ `feb2520a` | HF `train_80` (178473) + high5050 train (2937); select on combined val; tests locked | `scripts/train_mix223k.py --data-dir datasets/d39v_tigr4_high5050 --output-dir finetuning_outputs/mini_223k_d39v_tigr4_high5050_2ep` | `finetuning_outputs/mini_223k_d39v_tigr4_high5050_2ep/best` | `3afcd3cd…` |
 | `promoter-d39v-tigr4` | `neuralbioinfo/prokbert-mini-promoter` @ `8502f02` | `datasets/d39v_tigr4_dedup_3135` (2194/470/471) | `finetuning.py --model-name neuralbioinfo/prokbert-mini-promoter --dataset-dir datasets/d39v_tigr4_dedup_3135 --output-dir finetuning_outputs/promoter_d39v_tigr4_2ep --cpu` | `finetuning_outputs/promoter_d39v_tigr4_2ep/best` | `4c7b25b6…` |
 | `promoter-baseline` | `neuralbioinfo/prokbert-mini-promoter` @ `8502f02` | — (no training, zero-shot) | `scripts/eval_matrix.py` (same evaluator as all models) | HF hub (pinned rev) | n/a |
 

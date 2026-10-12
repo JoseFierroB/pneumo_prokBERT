@@ -1,0 +1,41 @@
+{
+ "source": "/home/fierro/Desktop/promoter-tools/data/benchmark/datasets/d39v_tigr4_high_dedup_1_to2_5050_cds_igrs",
+ "seed": 42,
+ "method": "70/15/15 stratified by y (no resampling; negatives fixed 1:2, 50% CDS + 50% IGR)",
+ "counts": {
+  "train": {
+   "n": 2937,
+   "pos": 979,
+   "neg": 1958,
+   "neg_cds": 970,
+   "neg_igr": 988
+  },
+  "eval": {
+   "n": 630,
+   "pos": 210,
+   "neg": 420,
+   "neg_cds": 216,
+   "neg_igr": 204
+  },
+  "test": {
+   "n": 630,
+   "pos": 210,
+   "neg": 420,
+   "neg_cds": 213,
+   "neg_igr": 207
+  }
+ },
+ "overlap_223k": 0,
+ "files_sha16": {
+  "train.csv": "8fe4ccab050f8eeb",
+  "eval.csv": "7f5c23d80625c02c",
+  "test.csv": "6f0ae60e4549b5c0",
+  "all.csv": "18d63ab0e440fc02"
+ },
+ "src_sha16": {
+  "positives_81bp.fasta": "e5326adc3c67698e",
+  "negatives_81bp.fasta": "80f27d236c73ead1",
+  "positives_81bp_metadata.tsv": "d608a3e3e7ef8fc9",
+  "negatives_81bp_metadata.tsv": "98e45fa3f1fb2b61"
+ }
+}
