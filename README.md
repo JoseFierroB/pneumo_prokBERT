@@ -33,14 +33,6 @@ See `datasets/MANIFEST.md`. Summary: `d39v_tigr4_high5050/` (primary pneumo data
 `pneumo_5fold/` + `hf_splits/<80|70|60>` folds (offline, SHA-pinned). Local HF snapshot in
 `data/bacterial_promoters/` (`SOURCE.md`); `test_sigma70`/`multispecies` load from the Hub.
 
-## Honest-eval rules
-
-- Same pipeline or it doesn't count (tokenizer and normalization fixed per script).
-- Select on validation, report on locked test, once.
-- Comparisons with paired bootstrap B=2000; method claims require multi-seed
-  (seed lottery is ±0.02 MCC).
-- Primary gap: gap-AUC (threshold-free); MCC for deployment and paper comparability.
-
 ## Map
 
 ```
