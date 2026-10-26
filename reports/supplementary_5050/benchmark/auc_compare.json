@@ -1,0 +1,42 @@
+{
+ "paper-test": {
+  "n": 22310,
+  "auc_3ep": 0.9043,
+  "auc_2ep": 0.8919,
+  "auc_1ep": 0.8844,
+  "auc_replica": 0.88,
+  "auc_base": 0.9791
+ },
+ "ecoli-sigma70": {
+  "n": 1864,
+  "auc_3ep": 0.9458,
+  "auc_2ep": 0.9392,
+  "auc_1ep": 0.9353,
+  "auc_replica": 0.9318,
+  "auc_base": 0.9373
+ },
+ "multispecies": {
+  "n": 22582,
+  "auc_3ep": 0.9018,
+  "auc_2ep": 0.8905,
+  "auc_1ep": 0.8815,
+  "auc_replica": 0.8788,
+  "auc_base": 0.881
+ },
+ "dedup-all": {
+  "n": 3135,
+  "auc_3ep": 0.9684,
+  "auc_2ep": 0.9584,
+  "auc_1ep": 0.951,
+  "auc_replica": 0.9494,
+  "auc_base": 0.9417
+ },
+ "5050-test": {
+  "n": 630,
+  "auc_3ep": 0.9411,
+  "auc_2ep": 0.9451,
+  "auc_1ep": 0.9417,
+  "auc_replica": 0.9337,
+  "auc_base": 0.9191
+ }
+}

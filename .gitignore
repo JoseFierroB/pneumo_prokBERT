@@ -235,3 +235,8 @@ energy/
 .tmp/
 *.tmp
 /tmp/
+
+# Lab notebook (local-only by design; never commit: full history + work-in-progress notes)
+reports/supplementary_5050/battery.md
+# Local-only defense pack, never commit
+reports/defense/

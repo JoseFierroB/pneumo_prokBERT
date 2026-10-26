@@ -1,0 +1,27 @@
+{
+ "spec": "80/10/10",
+ "seed": 42,
+ "method": "canonical fixed split (HF order, seed 42, SHA-asserted)",
+ "source": "data/bacterial_promoters/train.parquet",
+ "source_sha256": "3c537705abefb2ad878e89e5e052b503329ded9b31f3121fedca083ee1c8e0fb",
+ "created_utc": "2026-10-26T09:01:15+00:00",
+ "splits": {
+  "train": {
+   "n": 178473,
+   "pos_rate": 0.5002,
+   "sha16": "cacf0b8b2875aeaa"
+  },
+  "eval": {
+   "n": 22309,
+   "pos_rate": 0.4956,
+   "sha16": "716c3c3320d22c23"
+  },
+  "test": {
+   "n": 22310,
+   "pos_rate": 0.5032,
+   "sha16": "49a61e636397556b"
+  }
+ },
+ "stratified": false,
+ "canonical": true
+}

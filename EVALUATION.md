@@ -1,5 +1,9 @@
 # Evaluation Report — 8 Models × 4 Datasets (5090, k6s1, @0.5 / Youden)
 
+> Frozen Oct-12 snapshot. Per-model cards and `model_matrix/plots/` overlays were
+> archived out of repo on 2026-10-26 (see `~/pneumo_prokBERT_archive/2026-10-26/`);
+> the table below is intact. Current figures live in `reports/supplementary_5050/`.
+
 Matrix from `reports/model_matrix/metrics.json` (evaluator `scripts/eval_matrix.py`, one tokenizer call per dataset).
 Leakage flags: `clean` = clean of fine-tuning labels in this project; `train_overlap` / `selection_overlap` otherwise.
 `paper-val` is the selection set (appendix): used for best-checkpoint selection, never for ranking.

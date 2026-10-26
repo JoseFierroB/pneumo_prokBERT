@@ -1,0 +1,11 @@
+{
+ "note": "gap-AUC with 95% CIs (independent bootstrap B=2000 per side, train80 n=178473 + test_10 n=22310). pAUC gaps at FPR<0.1/<0.2. Point estimates match gaps.json canonical gaps.",
+ "rows": [
+  {"model": "1ep-mix", "trainAUC": 0.9097, "testAUC": 0.8844, "gapAUC": 0.0254, "gapCI95": [0.0207, 0.0298], "pAUCgap_01": 0.0381, "pAUCgap_02": 0.0353},
+  {"model": "1.5ep-mix", "trainAUC": 0.9137, "testAUC": 0.8834, "gapAUC": 0.0303, "gapCI95": [0.0262, 0.0351], "pAUCgap_01": 0.0452, "pAUCgap_02": 0.0426},
+  {"model": "2ep-mix", "trainAUC": 0.932, "testAUC": 0.8919, "gapAUC": 0.0401, "gapCI95": [0.0356, 0.0442], "pAUCgap_01": 0.0641, "pAUCgap_02": 0.0584},
+  {"model": "2.5ep-mix", "trainAUC": 0.908, "testAUC": 0.8774, "gapAUC": 0.0306, "gapCI95": [0.0263, 0.0349], "pAUCgap_01": 0.042, "pAUCgap_02": 0.0416},
+  {"model": "3ep-mix", "trainAUC": 0.9655, "testAUC": 0.9043, "gapAUC": 0.0611, "gapCI95": [0.0572, 0.0649], "pAUCgap_01": 0.1083, "pAUCgap_02": 0.0953},
+  {"model": "ES-AUC-mix", "trainAUC": 0.906, "testAUC": 0.876, "gapAUC": 0.03, "gapCI95": [0.0253, 0.0348], "pAUCgap_01": 0.0419, "pAUCgap_02": 0.0408}
+ ]
+}

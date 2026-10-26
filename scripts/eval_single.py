@@ -36,6 +36,10 @@ def parse_args():
                    help="columns to force-flag train_overlap (model trained on those rows)")
     p.add_argument("--leakage-base", type=str, default="promoter-baseline",
                    help="registry alias whose leakage flags seed the rest")
+    p.add_argument("--hf-split-dir", type=str, default=None,
+                   help="versioned HF split dir (manifest+ids): overrides paper-test "
+                        "with its test part (use with matching train; set --leakage-base "
+                        "and --train-overlap explicitly)")
     add_device_args(p)
     return p.parse_args()
 
@@ -52,6 +56,16 @@ def main():
     args_ns = argparse.Namespace(reference_root=args.reference_root)
     tok = ProkBERTTokenizer(tokenization_params={'kmer': 6, 'shift': 1}, operation_space='sequence')
     data = build_columns(args_ns, columns)
+    if args.hf_split_dir and "paper-test" in data:
+        import sys as _sys
+        _sys.path.insert(0, ".")
+        from scripts.hf_local import split_frames
+        frames, spec = split_frames(args.hf_split_dir)
+        te = frames["test"]
+        data["paper-test"] = ([s.upper().replace("U", "T") for s in te["segment"]],
+                              te["y"].to_numpy())
+        print(f"paper-test overridden by {args.hf_split_dir} test (spec {spec}, n={len(te)}) — "
+              f"set --leakage-base/--train-overlap explicitly")
     tok_data = pretokenize(tok, data)
     model = AutoModelForSequenceClassification.from_pretrained(args.model, trust_remote_code=True).to(device).eval()
     probed = infer_model(model, tok_data, columns, args.batch_size, device)

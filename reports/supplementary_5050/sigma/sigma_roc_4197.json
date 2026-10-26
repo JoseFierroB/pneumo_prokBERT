@@ -1,0 +1,170 @@
+{
+ "SigA-prop": {
+  "n_pos": 390,
+  "n_neg": 390,
+  "n_overlap_mixtrain": 262,
+  "benchmark": {
+   "auc": 0.9961,
+   "ci95": [
+    0.9915,
+    0.9992
+   ],
+   "auc_clean": 0.9922,
+   "n_clean": 518
+  },
+  "1ep": {
+   "auc": 0.9975,
+   "ci95": [
+    0.9939,
+    0.9997
+   ],
+   "auc_clean": 0.9941,
+   "n_clean": 518
+  },
+  "2ep": {
+   "auc": 0.9988,
+   "ci95": [
+    0.9969,
+    0.9999
+   ],
+   "auc_clean": 0.9969,
+   "n_clean": 518
+  },
+  "replica": {
+   "auc": 0.9952,
+   "ci95": [
+    0.9902,
+    0.9989
+   ],
+   "auc_clean": 0.9919,
+   "n_clean": 518
+  }
+ },
+ "SigA-all": {
+  "n_pos": 390,
+  "n_neg": 2798,
+  "n_overlap_mixtrain": 1799,
+  "benchmark": {
+   "auc": 0.9951,
+   "ci95": [
+    0.991,
+    0.9977
+   ],
+   "auc_clean": 0.9919,
+   "n_clean": 1389
+  },
+  "1ep": {
+   "auc": 0.9975,
+   "ci95": [
+    0.9939,
+    0.9995
+   ],
+   "auc_clean": 0.9939,
+   "n_clean": 1389
+  },
+  "2ep": {
+   "auc": 0.9989,
+   "ci95": [
+    0.9972,
+    0.9998
+   ],
+   "auc_clean": 0.9967,
+   "n_clean": 1389
+  },
+  "replica": {
+   "auc": 0.9957,
+   "ci95": [
+    0.9917,
+    0.998
+   ],
+   "auc_clean": 0.9931,
+   "n_clean": 1389
+  }
+ },
+ "SigX-prop": {
+  "n_pos": 27,
+  "n_neg": 27,
+  "n_overlap_mixtrain": 20,
+  "n_pos_unique": 27,
+  "composition": "21 D39V-SigX + 6 TIGR4-ComX (exact dupes of 4197 rows)",
+  "benchmark": {
+   "auc": 0.9204,
+   "ci95": [
+    0.8345,
+    0.9822
+   ],
+   "auc_clean": 0.9312,
+   "n_clean": 34
+  },
+  "1ep": {
+   "auc": 0.9973,
+   "ci95": [
+    0.987,
+    1.0
+   ],
+   "auc_clean": 1.0,
+   "n_clean": 34
+  },
+  "2ep": {
+   "auc": 0.9945,
+   "ci95": [
+    0.9792,
+    1.0
+   ],
+   "auc_clean": 0.9841,
+   "n_clean": 34
+  },
+  "replica": {
+   "auc": 0.9547,
+   "ci95": [
+    0.8906,
+    1.0
+   ],
+   "auc_clean": 0.9101,
+   "n_clean": 34
+  }
+ },
+ "SigX-all": {
+  "n_pos": 27,
+  "n_neg": 2798,
+  "n_overlap_mixtrain": 1557,
+  "n_pos_unique": 27,
+  "composition": "21 D39V-SigX + 6 TIGR4-ComX (exact dupes of 4197 rows)",
+  "benchmark": {
+   "auc": 0.9449,
+   "ci95": [
+    0.8943,
+    0.9846
+   ],
+   "auc_clean": 0.9498,
+   "n_clean": 1268
+  },
+  "1ep": {
+   "auc": 0.9903,
+   "ci95": [
+    0.9832,
+    0.9956
+   ],
+   "auc_clean": 0.9954,
+   "n_clean": 1268
+  },
+  "2ep": {
+   "auc": 0.9874,
+   "ci95": [
+    0.9759,
+    0.9956
+   ],
+   "auc_clean": 0.9753,
+   "n_clean": 1268
+  },
+  "replica": {
+   "auc": 0.9568,
+   "ci95": [
+    0.9166,
+    0.9827
+   ],
+   "auc_clean": 0.9114,
+   "n_clean": 1268
+  }
+ }
+}

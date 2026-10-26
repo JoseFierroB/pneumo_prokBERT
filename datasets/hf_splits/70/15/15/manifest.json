@@ -1,0 +1,29 @@
+{
+ "spec": "70/15/15",
+ "seed": 42,
+ "method": "single stratified split (sklearn, seed 42)",
+ "source": "data/bacterial_promoters/train.parquet",
+ "source_sha256": "3c537705abefb2ad878e89e5e052b503329ded9b31f3121fedca083ee1c8e0fb",
+ "created_utc": "2026-10-26T09:01:16+00:00",
+ "splits": {
+  "train": {
+   "n": 156164,
+   "pos_rate": 0.5,
+   "sha16": "ea90ae4cdd55aa23"
+  },
+  "eval": {
+   "n": 33464,
+   "pos_rate": 0.5,
+   "sha16": "e5a3aa973207f11f"
+  },
+  "test": {
+   "n": 33464,
+   "pos_rate": 0.5,
+   "sha16": "9c2cb6cd0d597b3b"
+  }
+ },
+ "stratified": true,
+ "key": "y|species-group(pos, rares<25->OTHER)|prom_class(neg)",
+ "n_keys": 32,
+ "min_key_n": 93
+}

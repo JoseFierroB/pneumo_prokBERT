@@ -49,6 +49,11 @@ def parse_args():
     p.add_argument("--test-name", type=str, default="test")
     p.add_argument("--out-dir", type=str, default="reports/model_matrix/plots")
     p.add_argument("--batch-size", type=int, default=512)
+    p.add_argument("--hf-split-dir", type=str, default=None,
+                   help="versioned HF split dir (manifest+ids): uses its train part "
+                        "as the train side (additive with --train-csv)")
+    p.add_argument("--hf-which", type=str, default="train",
+                   help="which manifest part to use as train side")
     add_device_args(p)
     return p.parse_args()
 
@@ -77,6 +82,12 @@ def main():
         df = pd.read_csv(f)[["segment", "y"]]
         frames.append(df)
         print(f"train part {f}: {len(df)}")
+    if args.hf_split_dir:
+        sys.path.insert(0, ".")
+        from scripts.hf_local import split_frames
+        fr, spec = split_frames(args.hf_split_dir)
+        frames.append(fr[args.hf_which][["segment", "y"]])
+        print(f"train part {args.hf_split_dir}:{args.hf_which} (spec {spec}): {len(fr[args.hf_which])}")
     if args.hf_train80:
         h = load_hf_train80()
         frames.append(pd.DataFrame({"segment": h["segment"], "y": h["y"]}))

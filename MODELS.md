@@ -37,3 +37,12 @@ Architecture note: `promoter-*` use the pooler implementation (21K `models.py`, 
 Paper hyperparams (all runs): AdamW lr 0.0004, betas 0.95/0.98, eps 5e-05, wd 0.01,
 2 epochs, batch 128, seed 42, k6s1, 81 bp, best by MCC. Large runs: warmup 500, fp32.
 Small runs (22–36 steps): `--warmup-ratio 0.1`, fp16 auto (as in `base-d39v`).
+
+## Supplementary-5050 era (WS-only weights, 2026-10)
+92 `best/` checkpoints live **only on WS** (`~/pneumo_prokBERT/finetuning_outputs/`,
+not synced locally, ignored by git). Full inventory with `model.safetensors`
+sha16 + `run_info.json` (script/seed/epochs/data) in
+`reports/supplementary_5050/ws_models_manifest.json` (generated 2026-10-26, read-only).
+Breakdown: 71× `train_mix223k.py` (grids: dropout/subset/ensemble/seeds/folds/cells/joint),
+15× `train_replica.py`, 6 legacy without `run_info.json`. Local `finetuning_outputs/`
+holds only the 20 pre-supplementary models above.

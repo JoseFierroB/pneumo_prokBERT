@@ -63,5 +63,57 @@
    "auc_eval__mini_223k_d39v_tigr4_high5050_2ep.png"
   ],
   "note": ""
+ },
+ {
+  "run": "mini_223k_d39v_tigr4_high5050_3ep",
+  "max_step": 4254,
+  "files": [
+   "loss_train__mini_223k_d39v_tigr4_high5050_3ep.png",
+   "gradnorm__mini_223k_d39v_tigr4_high5050_3ep.png",
+   "lr__mini_223k_d39v_tigr4_high5050_3ep.png",
+   "loss_eval__mini_223k_d39v_tigr4_high5050_3ep.png",
+   "mcc_eval__mini_223k_d39v_tigr4_high5050_3ep.png",
+   "auc_eval__mini_223k_d39v_tigr4_high5050_3ep.png"
+  ],
+  "note": ""
+ },
+ {
+  "run": "reg_do02_2ep",
+  "max_step": 2836,
+  "files": [
+   "loss_train__reg_do02_2ep.png",
+   "gradnorm__reg_do02_2ep.png",
+   "lr__reg_do02_2ep.png",
+   "loss_eval__reg_do02_2ep.png",
+   "mcc_eval__reg_do02_2ep.png",
+   "auc_eval__reg_do02_2ep.png"
+  ],
+  "note": ""
+ },
+ {
+  "run": "reg_lrlow_2ep",
+  "max_step": 2836,
+  "files": [
+   "loss_train__reg_lrlow_2ep.png",
+   "gradnorm__reg_lrlow_2ep.png",
+   "lr__reg_lrlow_2ep.png",
+   "loss_eval__reg_lrlow_2ep.png",
+   "mcc_eval__reg_lrlow_2ep.png",
+   "auc_eval__reg_lrlow_2ep.png"
+  ],
+  "note": ""
+ },
+ {
+  "run": "reg_wd01_2ep",
+  "max_step": 2836,
+  "files": [
+   "loss_train__reg_wd01_2ep.png",
+   "gradnorm__reg_wd01_2ep.png",
+   "lr__reg_wd01_2ep.png",
+   "loss_eval__reg_wd01_2ep.png",
+   "mcc_eval__reg_wd01_2ep.png",
+   "auc_eval__reg_wd01_2ep.png"
+  ],
+  "note": ""
  }
 ]
