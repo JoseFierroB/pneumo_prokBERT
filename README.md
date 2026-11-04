@@ -51,6 +51,60 @@ Root-level `finetuning.py` / `paper_replica.py` are legacy (pre-`scripts/`); don
 
 ## License and citation
 
+## Using the code and configuring hyperparameters
+
+The training pipeline is factored into importable modules under `tunable/`
+(config/data/model/train/evaluate/cli). New code only; existing `scripts/*`
+are imported, never modified. Defaults follow the paper replica (Frontiers
+2.3.2); every hyperparameter is an argparse flag (groups: data/model/optim/run),
+and `--preset replica|replica-1ep|ofat_center` starts from a known point that
+any flag can override.
+
+    # 1. replica smoke on the new data regime (acceptance gate)
+    pixi run python tunable/smoke_replica.py --output-dir finetuning_outputs/tunable_smoke
+
+    # 2. single run via the modular CLI (any flag overrides the preset)
+    pixi run python -m tunable.cli --preset replica-1ep \
+        --data-dir datasets/high5050_stratified_801010 \
+        --hf-split-spec local:species801010 --seed 42 \
+        --output-dir finetuning_outputs/my_run
+
+    # 3. same + train-vs-test-set gap and loss overlay
+    pixi run python -m tunable.cli --preset replica-1ep \
+        --data-dir datasets/high5050_stratified_801010 \
+        --hf-split-spec local:species801010 --output-dir finetuning_outputs/my_run \
+        --gap --gap-test-csv datasets/hf_splits/species801010/test_segments.csv \
+        --gap-test-name test-set --gap-out-dir reports/gaps/tunable
+
+    # 4. hyperparameter sweep example (dropout variants, 1ep, new regime)
+    for DO in 0.0 0.05 0.1 0.15 0.2 0.3; do
+      pixi run python -m tunable.cli --preset replica-1ep \
+        --data-dir datasets/high5050_stratified_801010 \
+        --hf-split-spec local:species801010 --dropout $DO \
+        --output-dir finetuning_outputs/tunable_do$DO
+    done
+
+    # 5. per-layer dropout + freeze/head variants use the same flags as scripts/train_mix223k.py
+    #    (--dropout-head/--dropout-hidden/--dropout-attn, --freeze-backbone, ...)
+
+Data builders (run from repo root):
+
+    # pneumo stratified 80/10/10 (ratio 1:2, seed 42)
+    pixi run python scripts/build_stratified_801010.py --out datasets/high5050_stratified_801010
+
+    # test-segments join for gap evals (SHA-verified against the split manifest)
+    pixi run python -c "from tunable.data import ensure_segments_csv; ensure_segments_csv('datasets/hf_splits/species801010', 'test')"
+
+Eval and plots:
+
+    pixi run python scripts/plot_training.py --runs my_run --out-dir reports/tunable/loss_curves
+    pixi run python scripts/generalization_gap.py --model finetuning_outputs/my_run/best ...
+
+Docs: reports/tunable/README.md (acceptance gate record), models.json
+(tunable-smoke-replica-1ep entry).
+
+## License and citation
+
 Own code and docs: MIT (see `LICENSE`). `prokbert/` is upstream under its terms.
 
 ```bibtex

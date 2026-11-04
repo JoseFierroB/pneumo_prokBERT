@@ -1,0 +1,186 @@
+{
+ "seed": 42,
+ "ratios": [
+  0.8,
+  0.1,
+  0.1
+ ],
+ "tiny_strata_kept_whole_in_train": [
+  [
+   "1|Acinetobacter calcoaceticus PHEA-2",
+   1
+  ],
+  [
+   "1|Agrobacterium sp. ATCC 31749",
+   1
+  ],
+  [
+   "1|Agrobacterium sp. H13-3",
+   1
+  ],
+  [
+   "1|Agrobacterium tumefaciens strain C58",
+   1
+  ],
+  [
+   "1|Agrobacterium tumefaciens strain F2",
+   1
+  ],
+  [
+   "1|Azoarcus sp. BH72",
+   1
+  ],
+  [
+   "1|Azorhizobium caulinodans ORS 571",
+   2
+  ],
+  [
+   "1|Azospirillum brasilense Sp245",
+   2
+  ],
+  [
+   "1|Bacillus thuringiensis serovar konkukian str. 97-27",
+   1
+  ],
+  [
+   "1|Borrelia burgdorferi B31",
+   1
+  ],
+  [
+   "1|Bradyrhizobium japonicum USDA 6",
+   2
+  ],
+  [
+   "1|Burkholderia phenoliruptrix BR3459a",
+   1
+  ],
+  [
+   "1|Campylobacter coli CVM N29710",
+   2
+  ],
+  [
+   "1|Enterococcus faecium Aus0085",
+   1
+  ],
+  [
+   "1|Escherichia coli str. K-12 substr. MG1655",
+   2
+  ],
+  [
+   "1|Geobacter metallireducens GS-15",
+   1
+  ],
+  [
+   "1|Klebsiella pneumoniae CG43",
+   1
+  ],
+  [
+   "1|Klebsiella pneumoniae subsp. pneumoniae MGH 78578",
+   1
+  ],
+  [
+   "1|Methylocella silvestris BL2",
+   1
+  ],
+  [
+   "1|Methylococcus capsulatus str. Bath",
+   1
+  ],
+  [
+   "1|Myxococcus xanthus DK 1622",
+   2
+  ],
+  [
+   "1|Neisseria gonorrhoeae NCCP 11945",
+   1
+  ],
+  [
+   "1|Pseudomonas putida KT2440",
+   1
+  ],
+  [
+   "1|Pseudomonas stutzeri DSM 4166",
+   1
+  ],
+  [
+   "1|Pseudomonas syringae pv. tomato str. DC3000",
+   1
+  ],
+  [
+   "1|Rhodobacter sphaeroides 2.4.1",
+   2
+  ],
+  [
+   "1|Rhodospirillum centenum SW",
+   1
+  ],
+  [
+   "1|Rhodospirillum rubrum F11",
+   2
+  ],
+  [
+   "1|Salmonella Typhimurium str. LT2",
+   1
+  ],
+  [
+   "1|Salmonella Typhimurium str. LT2 ",
+   1
+  ],
+  [
+   "1|Salmonella enterica serovar str. CFSAN002069",
+   1
+  ],
+  [
+   "1|Salmonella enterica subsp. enterica serovar Paratyphi A str. ATCC 9150",
+   1
+  ],
+  [
+   "1|Shewanella violacea DSS12",
+   1
+  ],
+  [
+   "1|Streptococcus intermedius JTH08",
+   1
+  ],
+  [
+   "1|Variovorax paradoxus EPS",
+   1
+  ],
+  [
+   "1|Vibrio cholerae O1 biovar El Tor str. N16961",
+   1
+  ],
+  [
+   "1|Vibrio parahaemolyticus RIMD 2210633",
+   1
+  ],
+  [
+   "1|Xylella fastidiosa 9a5c",
+   1
+  ],
+  [
+   "1|Yersinia enterocolitica subsp. enterocolitica 8081",
+   1
+  ]
+ ],
+ "max_proportion_deviation": 0.00016,
+ "counts": {
+  "train": {
+   "n": 178475,
+   "strata": 77
+  },
+  "val": {
+   "n": 22301,
+   "strata": 38
+  },
+  "test": {
+   "n": 22316,
+   "strata": 38
+  }
+ },
+ "files_sha16": {
+  "hf_train.csv": "f1f5bdec488dd075",
+  "hf_val.csv": "099ba1445357a223",
+  "hf_test.csv": "ba5551512669342f"
+ }
+}

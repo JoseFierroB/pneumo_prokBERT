@@ -1,0 +1,20 @@
+{
+ "spec": "species801010",
+ "method": "species-proportional (y,species) 80/10/10 seed 42 from hf_species; rares n<3 whole in train",
+ "seed": 42,
+ "source_sha256": "3c537705abefb2ad878e89e5e052b503329ded9b31f3121fedca083ee1c8e0fb",
+ "splits": {
+  "train": {
+   "n": 178475,
+   "sha16": "c3253f2d5ef15e86"
+  },
+  "eval": {
+   "n": 22301,
+   "sha16": "8cd3966110e81efe"
+  },
+  "test": {
+   "n": 22316,
+   "sha16": "84d148a4b5332933"
+  }
+ }
+}

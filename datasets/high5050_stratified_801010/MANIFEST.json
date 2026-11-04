@@ -1,0 +1,45 @@
+{
+ "seed": 42,
+ "method": "stratified (y, sigma-family, strain), 80/10/10, quotas>=3 (UNK n=5 whole-train)",
+ "counts": {
+  "train": {
+   "('neg', 'IGR', 'TIGR4')": 671,
+   "('neg', 'CDS', 'D39V')": 648,
+   "('neg', 'CDS', 'TIGR4')": 471,
+   "('pos', 'None', 'D39V')": 449,
+   "('neg', 'IGR', 'D39V')": 448,
+   "('pos', 'SigA', 'D39V')": 312,
+   "('pos', 'None', 'TIGR4')": 233,
+   "('pos', 'SigA', 'TIGR4')": 104,
+   "('pos', 'SigX', 'D39V')": 17,
+   "('pos', 'UNK', 'UNK')": 5
+  },
+  "eval": {
+   "('neg', 'IGR', 'TIGR4')": 84,
+   "('neg', 'CDS', 'D39V')": 81,
+   "('neg', 'CDS', 'TIGR4')": 59,
+   "('pos', 'None', 'D39V')": 56,
+   "('neg', 'IGR', 'D39V')": 56,
+   "('pos', 'SigA', 'D39V')": 39,
+   "('pos', 'None', 'TIGR4')": 29,
+   "('pos', 'SigA', 'TIGR4')": 13,
+   "('pos', 'SigX', 'D39V')": 2
+  },
+  "test": {
+   "('neg', 'IGR', 'TIGR4')": 84,
+   "('neg', 'CDS', 'D39V')": 81,
+   "('neg', 'CDS', 'TIGR4')": 59,
+   "('pos', 'None', 'D39V')": 57,
+   "('neg', 'IGR', 'D39V')": 56,
+   "('pos', 'SigA', 'D39V')": 39,
+   "('pos', 'None', 'TIGR4')": 29,
+   "('pos', 'SigA', 'TIGR4')": 13,
+   "('pos', 'SigX', 'D39V')": 2
+  }
+ },
+ "files_sha16": {
+  "train.csv": "38a50364c93e86f3",
+  "eval.csv": "2e220743800d2704",
+  "test.csv": "7e8d769ad6051f81"
+ }
+}

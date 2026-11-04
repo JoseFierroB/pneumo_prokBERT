@@ -1,0 +1,47 @@
+{
+ "seed": 42,
+ "method": "stratified (y, sigma-family, strain), 70/15/15, quotas>=3",
+ "counts": {
+  "train": {
+   "('neg', 'IGR', 'TIGR4')": 587,
+   "('neg', 'CDS', 'D39V')": 567,
+   "('neg', 'CDS', 'TIGR4')": 412,
+   "('pos', 'None', 'D39V')": 393,
+   "('neg', 'IGR', 'D39V')": 392,
+   "('pos', 'SigA', 'D39V')": 273,
+   "('pos', 'None', 'TIGR4')": 204,
+   "('pos', 'SigA', 'TIGR4')": 91,
+   "('pos', 'SigX', 'D39V')": 15,
+   "('pos', 'UNK', 'UNK')": 3
+  },
+  "eval": {
+   "('neg', 'IGR', 'TIGR4')": 126,
+   "('neg', 'CDS', 'D39V')": 122,
+   "('neg', 'CDS', 'TIGR4')": 89,
+   "('pos', 'None', 'D39V')": 84,
+   "('neg', 'IGR', 'D39V')": 84,
+   "('pos', 'SigA', 'D39V')": 58,
+   "('pos', 'None', 'TIGR4')": 43,
+   "('pos', 'SigA', 'TIGR4')": 20,
+   "('pos', 'SigX', 'D39V')": 3,
+   "('pos', 'UNK', 'UNK')": 1
+  },
+  "test": {
+   "('neg', 'IGR', 'TIGR4')": 126,
+   "('neg', 'CDS', 'D39V')": 121,
+   "('neg', 'CDS', 'TIGR4')": 88,
+   "('pos', 'None', 'D39V')": 85,
+   "('neg', 'IGR', 'D39V')": 84,
+   "('pos', 'SigA', 'D39V')": 59,
+   "('pos', 'None', 'TIGR4')": 44,
+   "('pos', 'SigA', 'TIGR4')": 19,
+   "('pos', 'SigX', 'D39V')": 3,
+   "('pos', 'UNK', 'UNK')": 1
+  }
+ },
+ "files_sha16": {
+  "train.csv": "7c24b05421bad671",
+  "eval.csv": "a7a3383a49daf49f",
+  "test.csv": "90158eadb0226ab5"
+ }
+}

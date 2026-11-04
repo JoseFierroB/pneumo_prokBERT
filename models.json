@@ -160,5 +160,33 @@
     "script": "scripts/eval_matrix.py (inference only)",
     "artifact": "HF hub, pinned rev",
     "sha256": null
+  },
+  "tunable-smoke-replica-1ep": {
+    "status": "exists",
+    "init": {
+      "hf_id": "neuralbioinfo/prokbert-mini",
+      "rev": "feb2520a43cd9b31f3121fedca083ee1c8e0fb"
+    },
+    "train_data": "species801010 train_178475 + datasets/high5050_stratified_801010/train (3358)",
+    "test_data": "species test-set 22316 (test_segments.csv)",
+    "script": "tunable/smoke_replica.py via tunable/cli.py (preset replica-1ep, 1ep, bs128, lr 4e-4, do 0.1, seed 42)",
+    "hyperparams": {
+      "epochs": 1,
+      "bs": 128,
+      "lr": 0.0004,
+      "wd": 0.01,
+      "warmup_steps": 500,
+      "dropout": 0.1,
+      "seed": 42
+    },
+    "artifact": "finetuning_outputs/tunable_smoke/best",
+    "sha256": "03b50143cd0168459470d858df4ee89ae28044c6412c321fbb0311c6754abf95",
+    "run_info": "finetuning_outputs/tunable_smoke/run_info.json",
+    "metrics": {
+      "data_test_mcc": 0.6483169198887292,
+      "data_test_auc": 0.9124489795918367,
+      "gap_auc": 0.0096
+    },
+    "validates": "bit-identical to ofat_lr4e4 (modular pipeline gate)"
   }
 }
