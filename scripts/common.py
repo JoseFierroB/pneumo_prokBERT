@@ -1,5 +1,16 @@
 #!/usr/bin/env python3
 """Shared runtime helpers for pneumo_prokBERT scripts (no upstream code here)."""
+
+
+def normalize(s):
+    """Canonical segment normalization: str + UPPER + U->T + strip.
+
+    Single implementation — import it, do not copy. Train, gap, eval and
+    builders must all use this so preprocessing can never diverge.
+    """
+    return str(s).upper().replace("U", "T").strip()
+
+
 import torch
 
 

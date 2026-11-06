@@ -42,14 +42,13 @@ from transformers import (
     AutoConfig,
     AutoModelForSequenceClassification,
     DataCollatorWithPadding,
-    EarlyStoppingCallback,
     Trainer,
     TrainingArguments,
     set_seed,
 )
 
 sys.path.insert(0, ".")
-from scripts.common import add_device_args, resolve_device
+from scripts.common import add_device_args, normalize, resolve_device
 from scripts.metrics import trainer_compute_metrics
 
 
@@ -106,17 +105,14 @@ def parse_args():
     p.add_argument("--warmup-ratio", type=float, default=None,
                    help="if set, warmup_steps forced to 0 and this fraction of total "
                         "steps used (e.g. 0.1); fixed steps confound epoch/subset comparisons")
-    p.add_argument("--es-patience", type=int, default=None,
-                   help="early stopping patience in evals (e.g. 3 = stop if no MCC gain "
-                        "in 3 consecutive evals of 50 steps); needs load_best (always on). "
-                        "Set epochs high (e.g. 6) and let the val curve decide the stop")
     p.add_argument("--hf-fold-dir", type=str, default=None,
                    help="joint-CV mode: folder with hf_train.csv/hf_eval.csv/hf_test.csv "
                         "(segment_id,segment,y) replacing the fixed 80/10/10 split; "
                         "combine with --data-dir pneumo fold for aligned full-data CV")
-    p.add_argument("--select-metric", type=str, default="mcc",
-                   help="metric for best-checkpoint and ES: mcc (deployment objective, "
-                        "historic default) or roc_auc (threshold-free, stable; use for gap work)")
+    p.add_argument("--select-metric", type=str, default="roc_auc",
+                    help="metric for best-checkpoint: roc_auc (threshold-free, "
+                         "stable; default) or mcc (deployment objective, "
+                         "historic default)")
     p.add_argument("--dropout", type=float, default=0.1,
                    help="classifier+hidden+attention dropout (default 0.1)")
     p.add_argument("--freeze-backbone", action="store_true",
@@ -136,10 +132,6 @@ def parse_args():
                    help="dedup dir for unseen extra rows in --full-train mode")
     add_device_args(p)
     return p.parse_args()
-
-
-def normalize(s):
-    return str(s).upper().replace("U", "T").strip()
 
 
 def sha_ids(ids):
@@ -364,9 +356,9 @@ def compose_full(args, ds, pneu):
     import pandas as pd
     full = ds["train"]
     assert len(full) == 223092, f"unexpected HF train size {len(full)}"
-    seen = {str(s).upper() for s in pneu["train"]["segment"]} if len(pneu["train"]) else set()
+    seen = {normalize(s) for s in pneu["train"]["segment"]} if len(pneu["train"]) else set()
     ddf = pd.read_csv(f"{args.dedup_dir}/train.csv")
-    extra = ddf[~ddf["segment"].str.upper().isin(seen)].copy()
+    extra = ddf[~ddf["segment"].map(normalize).isin(seen)].copy()
     print(f"dedup-unseen extra rows: {len(extra)} (excluded {len(ddf) - len(extra)} duplicates)")
     extra_ds = extra.assign(segment_id=extra["id"].astype(str))[["segment_id", "segment", "y"]]
     from datasets import Dataset
@@ -473,10 +465,11 @@ def build_training_args(args, use_cuda):
         num_train_epochs=args.num_train_epochs,
         warmup_steps=warmup_steps, warmup_ratio=warmup_ratio,
         adam_beta1=0.95, adam_beta2=0.98, adam_epsilon=5e-05,
-        logging_steps=50, save_steps=500,
+        logging_steps=50, save_steps=100,
         eval_strategy="steps", eval_steps=50,
-        save_strategy="steps", save_total_limit=2,
-        load_best_model_at_end=True, metric_for_best_model=args.select_metric, greater_is_better=True,
+        save_strategy="steps", save_total_limit=5,
+        load_best_model_at_end=True, metric_for_best_model="eval_" + args.select_metric,
+        greater_is_better=True,
         report_to="none", seed=train_seed(args),
         bf16=False, fp16=False,
         dataloader_num_workers=0, optim="adamw_torch",
@@ -574,9 +567,7 @@ def main():
     training_args = build_training_args(args, use_cuda)
     trainer = LabelSmoothTrainer(model=model, args=training_args, train_dataset=tok_train, eval_dataset=tok_val, ls=args.label_smoothing,
                       data_collator=DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8 if use_cuda else None),
-                      compute_metrics=trainer_compute_metrics,
-                      callbacks=[EarlyStoppingCallback(early_stopping_patience=args.es_patience)]
-                      if args.es_patience else None)
+                      compute_metrics=trainer_compute_metrics)
 
     write_run_info(args.output_dir, {
         "script": "scripts/train_mix223k.py", "model_name": BASE_MODEL,
@@ -589,7 +580,7 @@ def main():
         "per_device_train_batch_size": args.per_device_train_batch_size,
         "learning_rate": args.learning_rate, "weight_decay": args.weight_decay,
         "warmup_steps": args.warmup_steps, "warmup_ratio": args.warmup_ratio,
-        "es_patience": args.es_patience, "select_metric": args.select_metric, "dropout": args.dropout,
+        "select_metric": args.select_metric, "dropout": args.dropout,
         "label_smoothing": args.label_smoothing,
         "freeze_backbone": args.freeze_backbone, "probe_checkpoint": args.probe_checkpoint,
         "torch": torch.__version__, "transformers": __import__("transformers").__version__,

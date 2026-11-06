@@ -240,3 +240,6 @@ energy/
 reports/supplementary_5050/battery.md
 # Local-only defense pack, never commit
 reports/defense/
+
+# Tunable pipeline: local-only by design, never commit (kept out of the repo)
+tunable/
