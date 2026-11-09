@@ -16,15 +16,8 @@ All GPU scripts auto-detect the device (`--gpu N` / `--cpu` via `common.py`).
 - `eval_single.py` — one model × matrix columns → metrics JSON + per-column probs CSVs
   + ROC/PR/confusion-matrix plots
   (+`--hf-split-dir` override for paper-test, `--leakage-base/--train-overlap` flags).
-- `eval_csv.py` — one model × one CSV → probs CSV (ad-hoc splits).
-- `eval_matrix.py` — canonical 5×4 matrix (builders + batched inference).
 - `generalization_gap.py` — train-vs-test ROC/AUC gap (+`--hf-split-dir/--hf-which`).
-- `metrics.py` — shared cells: `cell_metrics` (fixed thr + Youden), `trainer_compute_metrics`.
-- `plot_curves.py` — train loss + val AUC from `trainer_state.json` → PNG (replaces
-  `parse_curves_1ep.py`/`plot_training.py`).
-- `audit_overlap_v2.py` — pairwise exact + sampled k-mer overlap audit (exit 2 on exact).
-- `build_joint_cv.py` — joint 5-fold pools HF+pneumo with fixed val, real holdouts.
-- `reserve_crown.py` — one-time locked crown-set reservation (single look until coronation).
+- `metrics.py` — shared cells: `cell_metrics` (fixed thr + Youden), `trainer_compute_metrics`..
 
 ## Data builders (deterministic, SHA-manifested)
 - `build_hf_splits.py` — versioned HF splits (`datasets/hf_splits/<spec>/`).
@@ -39,5 +32,3 @@ All GPU scripts auto-detect the device (`--gpu N` / `--cpu` via `common.py`).
 - `plot_overlays.py` — overlay plots used by `eval_matrix` (kept as its dependency).
 - `reference_sets.py` — canonical FASTA loader shared by matrix + probes.
 
-Verification ladder (no test suite, by design): `py_compile` → `--help` →
-`--dry-run` → subset run vs saved metrics → spot-check re-inference to `/tmp` and diff.
